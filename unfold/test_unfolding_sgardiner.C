@@ -398,9 +398,15 @@ void test_unfolding() {
   //const auto& sample_info = sample_info_map.at( SAMPLE_NAME );
   //const auto& respmat_file_name = sample_info.respmat_file_;
 
-  const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_NueOnly.root" );
-  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_NueOnly_25GeVBin.root" );
-  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_NueOnly_50GeVBin.root" );
+  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/STVAnalysis/univmake_output_finalBDTs/univmake_output_fhc_singlebin_geniefakedata_test.root" );  // intrinsic nue only
+  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/STVAnalysis/univmake_output_finalBDTs/univmake_output_fhc_singlebin_geniefakedata_test2.root" ); // run 5
+  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/STVAnalysis/univmake_output_finalBDTs/univmake_output_fhc_singlebin_nuwrofakedata_test2.root" ); // run 5
+  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/STVAnalysis/univmake_output_finalBDTs/univmake_output_fhc_singlebin_geniefakedata_nocvweights.root" );
+  //const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/STVAnalysis/univmake_output_finalBDTs/univmake_output_fhc_singlebin_nuwrofakedata_nocvweights.root" );
+
+  const std::string respmat_file_name( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_geniefakedata_subset_withoutcvweights_test.root" );
+  
+
 
   // Do the systematics calculations in preparation for unfolding
   //auto* syst_ptr = new MCC9SystematicsCalculator( respmat_file_name, "../systcalc_unfold_fd.conf" );
@@ -686,8 +692,7 @@ void test_unfolding() {
   lg->Draw( "same" );
 
   // Plot slices of the unfolded result
-  auto* sb_ptr = new SliceBinning( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/xsec_analyzer/singlebin_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/xsec_analyzer/test_slice_config.txt" );
+  auto* sb_ptr = new SliceBinning( "../singlebin_slice_config.txt" );
   auto& sb = *sb_ptr;
 
   // Get the factors needed to convert to cross-section units

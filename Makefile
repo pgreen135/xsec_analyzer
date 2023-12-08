@@ -1,4 +1,4 @@
-all: analyzer univmake
+all: univmake
 
 univmake: univmake.C stv_root_dict.o
 	$(CXX) $(shell root-config --cflags --libs) -O3 -o $@ $^

@@ -1,0 +1,4 @@
+numXbins 1
+numYbins 1
+xbin  ybin  z
+0  0  4.64227247502460694e-01

@@ -436,7 +436,8 @@ double CrossSectionExtractor::conversion_factor() const {
   double integ_flux = integrated_numu_flux_in_FV( total_pot );
   double num_Ar = num_Ar_targets_in_FV();
 
-  double conv_factor = num_Ar * integ_flux / 1e38;
+  double conv_factor = num_Ar * integ_flux / 1e39;
+  
   return conv_factor;
 }
 

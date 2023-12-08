@@ -1,0 +1,16 @@
+test_bin_config
+stv_tree
+11
+0 0 "mc_is_signal && mc_shr_bkt_E >= 0 && mc_shr_bkt_E < 25.0"
+1 -1 "category == 1"
+1 -1 "category == 2"
+1 -1 "category == 3"
+1 -1 "category == 4"
+1 -1 "category == 5"
+1 -1 "category == 6"
+1 -1 "category == 7"
+1 -1 "category == 8"
+1 -1 "category == 9"
+1 -1 "category == 10"
+1
+0 0 "sel_NueCC1piXp && sel_shr_energy_cali >= 0 && sel_shr_energy_cali < 25.0"

@@ -384,6 +384,10 @@ SliceHistogram::Chi2Result SliceHistogram::get_chi2(
     // Note the one-based bin indices used for ROOT histograms
     double counts = hist_->GetBinContent( a + 1 );
     double other_counts = other.hist_->GetBinContent( a + 1 );
+
+    //if (a == 4) {
+    //  counts=other_counts; //fudge for testing
+    //}
     diff_vec( 0, a ) = counts - other_counts;
   }
 

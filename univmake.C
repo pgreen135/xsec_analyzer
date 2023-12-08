@@ -14,6 +14,7 @@
 #include "FilePropertiesManager.hh"
 #include "MCC9SystematicsCalculator.hh"
 #include "UniverseMaker.hh"
+#include "Config.hh"
 
 // Helper function that checks whether a given ROOT file represents an ntuple
 // from a reweightable MC sample. This is done by checking for the presence of

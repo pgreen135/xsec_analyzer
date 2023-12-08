@@ -1,0 +1,2 @@
+  FakeData_chi2  FakeData_pvalue  av0_name  av0_units  bnb_data_pot  num_active_vars  num_bins  num_other_vars  ratio_max  uBTune_chi2  uBTune_pvalue  x0_max  x0_min  y_axis_title  y_max  y_min
+  0.312552  0.000000  {$FHC$}  {$$}  100287100000000014286848.000000  1  1  0  1.090904  13.195850  0.000000  25.000000  0.000000  {$d\sigma /  dFHC\text{ }(10^{-39}\text{ cm}^{2} / \mathrm{Ar})$}  2.690109  0.000000

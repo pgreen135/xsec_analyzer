@@ -5,14 +5,14 @@
 
 // Boundaries of the neutrino vertex fiducial volume (cm)
 // This is handled the same way for reco and in MC
-double FV_X_MIN =   21.5;
-double FV_X_MAX =  234.85;
+double FV_X_MIN =   10.0;
+double FV_X_MAX =  246.0;
 
-double FV_Y_MIN = -95.0;
-double FV_Y_MAX =  95.0;
+double FV_Y_MIN = -101.0;
+double FV_Y_MAX =  101.0;
 
-double FV_Z_MIN =   21.5;
-double FV_Z_MAX =  966.8;
+double FV_Z_MIN =   10.0;
+double FV_Z_MAX =  986.0;
 
 // Use a template here so that this function can take float or double values as
 // input
@@ -55,7 +55,13 @@ inline double integrated_numu_flux_in_FV( double pot ) {
   // root [4] hEnumu_cv->Integral()
   // (double) 7.3762291e-10
   // See the README file in that same folder for details.
-  constexpr double numu_per_cm2_per_POT_in_AV = 7.3762291e-10;
+  double numu_per_cm2_per_POT_in_AV;
+  if (useNuMI) {
+    numu_per_cm2_per_POT_in_AV = 1.844847e-11; // FHC NuMI Nue - Value from Krishan's thesis, need to update.
+  }
+  else {
+    numu_per_cm2_per_POT_in_AV = 7.3762291e-10;
+  }
   double flux = pot * numu_per_cm2_per_POT_in_AV; // numu / cm^2
   return flux;
 }

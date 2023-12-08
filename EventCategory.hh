@@ -1,44 +1,24 @@
 #pragma once
 
+#include <string>
+#include <map>
+
 #include "TH1.h"
 
 // Enum used to label event categories of interest for analysis plots
 enum EventCategory {
 
-  // Unable to categorize (e.g., because the event is real data and thus
-  // has no MC truth information)
-  kUnknown = 0,
-
-  // Signal events broken down by underlying reaction mode
-  kSignalCCQE = 1,
-  kSignalCCMEC = 2,
-  kSignalCCRES = 3,
-  kSignalOther = 4,
-
-  // True numu CC event with at least one final-state pion above threshold
-  kNuMuCCNpi = 5,
-
-  // True numu CC event with zero final-state pions above threshold and
-  // zero final-state protons above threshold
-  kNuMuCC0pi0p = 6,
-
-  // Any true numu CC event which does not satisfy the criteria for inclusion
-  // in one of the other categories above
-  kNuMuCCOther = 7,
-
-  // True nue CC event
-  kNuECC = 8,
-
-  // True neutral current event for any neutrino flavor
-  kNC = 9,
-
-  // True neutrino vertex (any reaction mode and flavor combination) is outside
-  // of the fiducial volume
-  kOOFV = 10,
-
-  // All events that do not fall within any of the other categories (e.g.,
-  // numubar CC)
-  kOther = 11
+  kCCNue1piXp = 0,
+  kCCNueNpi = 1,
+  kCCNuepizero = 2,
+  kCCNueNp = 3,
+  kCCNueOther = 4,
+  kCCNumupizero = 5,
+  kCCNumuOther = 6,
+  kNCpizero = 7,
+  kNCOther = 8,
+  kOutFV= 9,
+  kOutOfCryo = 10,
 
 };
 
@@ -81,8 +61,10 @@ class EventCategoryInterpreter {
     inline void set_mc_histogram_style( EventCategory ec, TH1* mc_hist ) const
     {
       int color = color_code( ec );
+      int style = event_category_to_style_map_.at( ec );
       mc_hist->SetFillColor( color );
       mc_hist->SetLineColor( color );
+      mc_hist->SetFillStyle (style );
       mc_hist->SetStats( false );
     }
 
@@ -125,32 +107,46 @@ class EventCategoryInterpreter {
     EventCategoryInterpreter() {}
 
     std::map< EventCategory, std::string > event_category_to_label_map_ = {
-      { kUnknown, "Unknown" },
-      { kSignalCCQE, "Signal (CCQE)" },
-      { kSignalCCMEC, "Signal (CCMEC)" },
-      { kSignalCCRES, "Signal (CCRES)" },
-      { kSignalOther, "Signal (Other)" },
-      { kNuMuCCNpi, "#nu_{#mu} CCN#pi" },
-      { kNuMuCC0pi0p, "#nu_{#mu} CC0#pi0p" },
-      { kNuMuCCOther, "Other #nu_{#mu} CC" },
-      { kNuECC, "#nu_{e} CC" },
-      { kNC, "NC" },
-      { kOOFV, "Out FV" },
-      { kOther, "Other" }
+      { kCCNue1piXp, "#nu_{e} CC 1#pi Xp"},
+      { kCCNueNpi, "#nu_{e} CC N#pi"},
+      { kCCNuepizero, "#nu_{e} CC #pi^{0}"},
+      { kCCNueNp, "#nu_{e} CC Np"},
+      { kCCNueOther, "#nu_{e} CC Other" },
+      { kCCNumupizero, "#nu_{#mu} CC #pi^{0}"},
+      { kCCNumuOther, "#nu_{#mu} CC Other"},
+      { kNCpizero, "NC #pi^{0}"},
+      { kNCOther, "NC Other"},
+      { kOutFV, "Out of FV"},
+      { kOutOfCryo, "Out of Cryo"}
     };
 
     std::map< EventCategory, int > event_category_to_color_map_ = {
-      { kUnknown, kGray },
-      { kSignalCCQE, kGreen },
-      { kSignalCCMEC, kGreen + 1 },
-      { kSignalCCRES, kGreen + 2 },
-      { kSignalOther, kGreen + 3 },
-      { kNuMuCCNpi, kAzure - 2 },
-      { kNuMuCC0pi0p, kAzure - 1 },
-      { kNuMuCCOther, kAzure },
-      { kNuECC, kViolet },
-      { kNC, kOrange },
-      { kOOFV, kRed + 3 },
-      { kOther, kRed + 1 }
+
+      { kCCNue1piXp, kCyan+3 },
+      { kCCNueNpi, kCyan-3 },
+      { kCCNuepizero, kRed+1 }, 
+      { kCCNueNp, kRed+2 },
+      { kCCNueOther, kRed },
+      { kCCNumupizero, kBlue-3 },
+      { kCCNumuOther, kBlue-6 },
+      { kNCpizero, kMagenta+3 },
+      { kNCOther, kMagenta+1 },
+      { kOutFV, kGray+1 },
+      { kOutOfCryo, kRed-3 }
+    };
+
+    std::map< EventCategory, int > event_category_to_style_map_ = {
+
+      { kCCNue1piXp, 1001 },
+      { kCCNueNpi, 1001 },
+      { kCCNuepizero, 1001 }, 
+      { kCCNueNp, 1001 },
+      { kCCNueOther, 1001 },
+      { kCCNumupizero, 1001 },
+      { kCCNumuOther, 1001 },
+      { kNCpizero, 1001 },
+      { kNCOther, 1001 },
+      { kOutFV, 1001 },
+      { kOutOfCryo, 3004 }
     };
 };

@@ -20,6 +20,7 @@
 #include "EventCategory.hh"
 #include "TreeUtils.hh"
 #include "WeightHandler.hh"
+#include "Config.hh"
 
 // Only load the library in this way if we're using this code from inside the
 // ROOT C++ interpreter. We could check for __CINT__ as well, but the specific
@@ -54,6 +55,7 @@ std::string ntuple_subfolder_from_file_name( const std::string& file_name ) {
 // Branch names for special event weights
 const std::string SPLINE_WEIGHT_NAME = "weight_splines_general_Spline";
 const std::string TUNE_WEIGHT_NAME = "weight_TunedCentralValue_UBGenie";
+const std::string PPFX_WEIGHT_NAME = "weight_ppfx_cv_UBPPFXCV";
 
 // Special weight name to store the unweighted event counts
 const std::string UNWEIGHTED_NAME = "unweighted";
@@ -83,23 +85,55 @@ bool string_has_end( const std::string& str, const std::string& end ) {
 // Multiplies a given event weight by extra correction factors as appropriate.
 // TODO: include the rootino_fix weight as a correction to the central value
 void apply_cv_correction_weights( const std::string& wgt_name,
-  double& wgt, double spline_weight, double tune_weight )
-{
+  double& wgt, double spline_weight, double tune_weight, double ppfx_weight = 1, double normalisation_weight = 1 )
+{ 
+  
+  //wgt = 1;
+
   if ( string_has_end(wgt_name, "UBGenie") ) {
-    wgt *= spline_weight;
+    if (useNuMI) wgt *= spline_weight * ppfx_weight * normalisation_weight;
+    else wgt *= spline_weight;
   }
-  else if ( wgt_name == "weight_flux_all"
+  // NuMI PPFX weights
+  else if ( string_has_end(wgt_name, "UBPPFXCV")
+    || wgt_name == "weight_ppfx_all") 
+  {
+    wgt *= spline_weight * tune_weight * normalisation_weight;
+  }
+  else if ( (wgt_name == "weight_flux_all" && !useNuMI)
     || wgt_name == "weight_reint_all"
     || wgt_name == "weight_xsr_scc_Fa3_SCC"
     || wgt_name == "weight_xsr_scc_Fv3_SCC" )
   {
-    wgt *= spline_weight * tune_weight;
+    if (useNuMI) wgt *= spline_weight * tune_weight * ppfx_weight * normalisation_weight;
+    else wgt *= spline_weight * tune_weight;
+  }
+  // NuMI beamline variation weights
+  else if (wgt_name == "weight_Horn_2kA"
+        || wgt_name == "weight_Horn1_x_3mm"
+        || wgt_name == "weight_Horn1_y_3mm"
+        || wgt_name == "weight_Beam_spot_1_1mm"
+        || wgt_name == "weight_Beam_spot_1_5mm"
+        || wgt_name == "weight_Horn2_x_3mm"
+        || wgt_name == "weight_Horn2_y_3mm"
+        || wgt_name == "weight_Horns_0mm_water"
+        || wgt_name == "weight_Horns_2mm_water"
+        || wgt_name == "weight_Beam_shift_x_1mm"
+        || wgt_name == "weight_Beam_shift_y_1mm"
+        || wgt_name == "weight_Target_z_7mm") 
+  {
+    wgt *= spline_weight * tune_weight * ppfx_weight * normalisation_weight;
   }
   else if ( wgt_name == SPLINE_WEIGHT_NAME ) {
-    // No extra weight factors needed
+    if (useNuMI) wgt *= ppfx_weight * normalisation_weight;
+    // No extra weight factors needed for BNB
     return;
   }
-  else throw std::runtime_error( "Unrecognized weight name" );
+  else {
+    std::cout << "Unrecognized weight name: " << wgt_name << std::endl;
+    throw std::runtime_error( "Unrecognized weight name" );
+  }
+  
 }
 
 // Enum used to label bin types in true space
@@ -446,8 +480,8 @@ UniverseMaker::UniverseMaker( const std::string& config_file_name )
     in_file >> temp_bin;
 
     // DEBUG
-    std::cout << "tb = " << tb << '\n';
-    std::cout << temp_bin << '\n';
+    //std::cout << "tb = " << tb << '\n';
+    //std::cout << temp_bin << '\n';
 
     true_bins_.push_back( temp_bin );
   }
@@ -460,8 +494,8 @@ UniverseMaker::UniverseMaker( const std::string& config_file_name )
     in_file >> temp_bin;
 
     // DEBUG
-    std::cout << "rb = " << rb << '\n';
-    std::cout << temp_bin << '\n';
+    //std::cout << "rb = " << rb << '\n';
+    //std::cout << temp_bin << '\n';
 
     reco_bins_.push_back( temp_bin );
   }
@@ -570,6 +604,7 @@ void UniverseMaker::build_universes(
   // these are missing in the input TTree (we could be working with real data)
   wh.add_branch( input_chain_, SPLINE_WEIGHT_NAME, false );
   wh.add_branch( input_chain_, TUNE_WEIGHT_NAME, false );
+  if (useNuMI) wh.add_branch( input_chain_, PPFX_WEIGHT_NAME, false );
 
   this->prepare_formulas();
 
@@ -577,6 +612,18 @@ void UniverseMaker::build_universes(
   // with MC events, then we shouldn't do anything with the true bin counts.
   bool is_mc;
   input_chain_.SetBranchAddress( "is_mc", &is_mc );
+
+  // set CV weight addresses (NuMI)
+  float spline_weight_numi = 1;
+  float tune_weight_numi = 1;
+  float ppfx_weight_numi = 1;
+  float normalisation_weight_numi = 1;
+  if (useNuMI) {
+    input_chain_.SetBranchAddress( "spline_weight", &spline_weight_numi );
+    input_chain_.SetBranchAddress( "tuned_cv_weight", &tune_weight_numi );
+    input_chain_.SetBranchAddress( "ppfx_cv_weight", &ppfx_weight_numi );
+    input_chain_.SetBranchAddress( "normalisation_weight", &normalisation_weight_numi );
+  }
 
   // Get the first TChain entry so that we can know the number of universes
   // used in each vector of weights
@@ -629,6 +676,8 @@ void UniverseMaker::build_universes(
     std::vector< FormulaMatch > matched_true_bins;
     double spline_weight = 0.;
     double tune_weight = 0.;
+    double ppfx_weight = 0.;          // NuMI-specific
+    double normalisation_weight = 0.; // NuMI-specific
 
     // If we're working with an MC sample, then find the true bin(s)
     // that should be filled for the current event
@@ -645,10 +694,20 @@ void UniverseMaker::build_universes(
       // If we have event weights in the map at all, then get the current
       // event's CV correction weights here for potentially frequent re-use
       // below
-      auto& wm = wh.weight_map();
-      if ( wm.size() > 0u ) {
-        spline_weight = wm.at( SPLINE_WEIGHT_NAME )->front();
-        tune_weight = wm.at( TUNE_WEIGHT_NAME )->front();
+      // NuMI
+      // access CV weights (NuMI-specific)
+      if (useNuMI) {
+        spline_weight = spline_weight_numi;
+        tune_weight = tune_weight_numi;
+        ppfx_weight = ppfx_weight_numi;
+        normalisation_weight = normalisation_weight_numi;
+      }
+      else {
+        auto& wm = wh.weight_map();
+        if ( wm.size() > 0u ) {
+          spline_weight = wm.at( SPLINE_WEIGHT_NAME )->front();
+          tune_weight = wm.at( TUNE_WEIGHT_NAME )->front();
+        }
       }
     } // MC event
 
@@ -665,7 +724,8 @@ void UniverseMaker::build_universes(
         double w = wgt_vec->operator[]( u );
 
         // Multiply by any needed CV correction weights
-        apply_cv_correction_weights( wgt_name, w, spline_weight, tune_weight );
+        if (useNuMI) apply_cv_correction_weights( wgt_name, w, spline_weight, tune_weight, ppfx_weight, normalisation_weight );
+        else apply_cv_correction_weights( wgt_name, w, spline_weight, tune_weight );
 
         // Deal with NaNs, etc. to make a "safe weight" in all cases
         double safe_wgt = safe_weight( w );

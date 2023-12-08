@@ -1,0 +1,43 @@
+#
+# Beam-off data
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run1_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run2_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run4_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run5_fhc.root
+#
+# Full beam-on data or fake data
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run1_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run2_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run4_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run5_fhc.root
+#
+# Dirt MC samples
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run1_fhc_fakeweights.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run2a_fhc_fakeweights.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run4_fhc_fakeweights.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run5_fhc_fakeweights.root
+#
+# Intrinsic nue MC samples
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run1_fhc_test.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run2_fhc_test.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run4_fhc_test.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run5_fhc_test.root
+#
+# numu MC samples (standard nu overlay)
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run1_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run2_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run4_fhc.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run5_fhc.root
+#
+# DetVar samples
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_CV_full.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_LYDown_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_LYRayleigh_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_run2_fhc_LYAttenuation_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_SCE_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_Recombination_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_WireModX_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_WireModYZ_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_WireModThetaXZ_test_slim.root
+/Volumes/MyPassport/stvNTuples/fhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_fhc_merged_WireModThetaYZ_test_slim.root
+#

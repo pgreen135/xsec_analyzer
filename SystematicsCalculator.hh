@@ -14,6 +14,7 @@
 // STV analysis includes
 #include "FilePropertiesManager.hh"
 #include "UniverseMaker.hh"
+#include "Config.hh"
 
 // Helper function template that retrieves an object from a TDirectoryFile
 // and loads a pointer to it into a std::unique_ptr of the correct type
@@ -191,6 +192,8 @@ class SystematicsCalculator {
       const std::string& syst_cfg_file_name = "",
       const std::string& respmat_tdirectoryfile_name = "" );
 
+    virtual ~SystematicsCalculator() = default;
+
     void load_universes( TDirectoryFile& total_subdir );
 
     void build_universes( TDirectoryFile& root_tdir );
@@ -267,6 +270,10 @@ class SystematicsCalculator {
     // as an argument to this function is zero-based.
     virtual double evaluate_observable( const Universe& univ, int reco_bin,
       int flux_universe_index = -1 ) const = 0;
+
+    // overload to evaluate only to specific event catagory
+    virtual double evaluate_observable( const Universe& univ, int reco_bin,
+      std::string event_category, int flux_universe_index = -1 ) const = 0;
 
     // Evaluate a covariance matrix element for the data statistical
     // uncertainty on the observable of interest for a given pair of reco bins.
@@ -742,8 +749,15 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
             double bnb_trigs = run_to_bnb_trigs_map.at( run );
             double ext_trigs = run_to_ext_trigs_map.at( run );
 
-            reco_hist->Scale( bnb_trigs / ext_trigs );
-            reco_hist2d->Scale( bnb_trigs / ext_trigs );
+            if (useNuMI) {
+              reco_hist->Scale( (bnb_trigs / ext_trigs) * 0.98 );   // NuMI 2% beam occupancy 
+              reco_hist2d->Scale( (bnb_trigs / ext_trigs) * 0.98 ); // NuMI 2% beam occupancy 
+            }
+            else {
+              reco_hist->Scale( bnb_trigs / ext_trigs );
+              reco_hist2d->Scale( bnb_trigs / ext_trigs );
+            }
+            
           }
 
           // If we don't have a histogram in the map for this data type
@@ -1438,6 +1452,37 @@ std::unique_ptr< CovMatrixMap > SystematicsCalculator::get_covariances() const
 
     } // MCFullCorr type
 
+    else if ( type == "MCFullCorrCategory" ) {
+      // Read in the fractional uncertainty from the configuration file
+      double frac_unc = 0.;
+      config_file >> frac_unc;
+
+      // Read in the category from the configuration file
+      std::string event_category;
+      config_file >> event_category;
+
+      const double frac2 = std::pow( frac_unc, 2 );
+      int num_cm_bins = this->get_covariance_matrix_size();
+
+      const auto& cv_univ = this->cv_universe();
+      for ( size_t a = 0u; a < num_cm_bins; ++a ) {
+
+        double cv_a = this->evaluate_observable( cv_univ, a, event_category );
+
+        for ( int b = 0u; b < num_cm_bins; ++b ) {
+
+          double cv_b = this->evaluate_observable( cv_univ, b, event_category );
+
+          double covariance = cv_a * cv_b * frac2;
+
+          temp_cov_mat.cov_matrix_->SetBinContent( a + 1, b + 1, covariance );
+
+        } // reco bin b
+
+      } // reco bin a
+
+    } // MCFullCorrCategory type
+
     else if ( type == "DV" ) {
       // Get the detector variation type represented by the current universe
       std::string ntuple_type_str;
@@ -1461,10 +1506,13 @@ std::unique_ptr< CovMatrixMap > SystematicsCalculator::get_covariances() const
       // The Recomb2 and SCE variations use an alternate "extra CV" universe
       // since they were generated with smaller MC statistics.
       // TODO: revisit this if your detVar samples change in the future
-      if ( ntuple_type == NFT::kDetVarMCSCE
-        || ntuple_type == NFT::kDetVarMCRecomb2 )
-      {
-        detVar_cv_u = detvar_universes_.at( NFT::kDetVarMCCVExtra ).get();
+      // BNB only
+      if (!useNuMI) {
+        if ( ntuple_type == NFT::kDetVarMCSCE
+          || ntuple_type == NFT::kDetVarMCRecomb2 )
+        {
+          detVar_cv_u = detvar_universes_.at( NFT::kDetVarMCCVExtra ).get();
+        }
       }
 
       make_cov_mat( *this, temp_cov_mat, *detVar_cv_u,
