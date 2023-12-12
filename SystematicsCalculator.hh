@@ -737,11 +737,20 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
         // scaling to the beam-on triggers in the case of EXT data
         if ( !is_mc ) {
 
-          auto reco_hist = get_object_unique_ptr< TH1D >(
-            "unweighted_0_reco", *subdir );
+          // when using fake data, test whether there is a weighted CV histogram present
+          auto tmp_reco_hist = type == NFT::kOnBNB ? get_object_unique_ptr<TH1D>((CV_UNIV_NAME + "_0_reco").c_str(), *subdir) : nullptr;
+          const auto dataContainsWeightedCV = tmp_reco_hist.get() != nullptr;
+          //std::cout << "DEBUG dataContainsWeightedCV: "<<dataContainsWeightedCV<<" isonbnb: " << (type == NFT::kOnBNB) << " tmp_reco_hist.get()!=nullptr: " << (tmp_reco_hist.get() != nullptr) << std::endl;
+          auto reco_hist = dataContainsWeightedCV ? std::move(tmp_reco_hist) : get_object_unique_ptr<TH1D>("unweighted_0_reco", *subdir);
 
-          auto reco_hist2d = get_object_unique_ptr< TH2D >(
-            "unweighted_0_reco2d", *subdir );
+          const std::string reco_hist2d_name = (dataContainsWeightedCV ? CV_UNIV_NAME : "unweighted") + "_0_reco2d";
+          auto reco_hist2d = get_object_unique_ptr<TH2D>(reco_hist2d_name.c_str(), *subdir);
+
+          //auto reco_hist = get_object_unique_ptr< TH1D >(
+          //  "unweighted_0_reco", *subdir );
+
+          //auto reco_hist2d = get_object_unique_ptr< TH2D >(
+          //  "unweighted_0_reco2d", *subdir );
 
           // If we're working with EXT data, scale it to the corresponding
           // number of triggers from the BNB data from the same run
@@ -868,7 +877,14 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           // TODO: add the capability for fake data to use event weights
           // (both in the saved fake data Universe object and in the
           // corresponding "data" histogram of reco event counts
-          std::string hist_name_prefix = "unweighted_0";
+          
+          const auto tmp_reco_hist = get_object_unique_ptr<TH1D>((CV_UNIV_NAME + "_0_reco").c_str(), *subdir);
+          const auto dataContainsWeightedCV = tmp_reco_hist.get() != nullptr;
+          // std::string hist_name_prefix = "unweighted_0";
+          std::string hist_name_prefix = (dataContainsWeightedCV ? CV_UNIV_NAME : "unweighted" ) + "_0"; // todo decide whether to revert !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          //std::cout << "DEBUG hist_name_prefix: " << hist_name_prefix << std::endl;
+
+          //std::string hist_name_prefix = "unweighted_0";
 
           auto h_reco = get_object_unique_ptr< TH1D >(
             (hist_name_prefix + "_reco"), *subdir );

@@ -125,7 +125,7 @@ void apply_cv_correction_weights( const std::string& wgt_name,
     wgt *= spline_weight * tune_weight * ppfx_weight * normalisation_weight;
   }
   else if ( wgt_name == SPLINE_WEIGHT_NAME ) {
-    if (useNuMI) wgt *= ppfx_weight * normalisation_weight;
+    if (useNuMI) wgt *= ppfx_weight * normalisation_weight*tune_weight;
     // No extra weight factors needed for BNB
     return;
   }

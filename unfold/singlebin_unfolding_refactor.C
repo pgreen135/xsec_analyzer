@@ -353,6 +353,8 @@ void singlebin_unfolding_refactor() {
   slice_unf->hist_->SetMarkerSize( 0.8 );
   slice_unf->hist_->SetStats( false );
 
+  slice_unf->hist_->SetTitle("Genie Fake Data: #nu overlay");
+
   double ymax = -DBL_MAX;
   slice_unf->hist_->Draw( "e" );
   for ( const auto& pair : slice_gen_map ) {

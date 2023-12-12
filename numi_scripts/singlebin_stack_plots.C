@@ -26,11 +26,14 @@ void singlebin_stack_plots() {
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_geniefakedata_withcvweights.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_geniefakedata_withoutcvweights.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_geniefakedata_subset_withoutcvweights_test.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_lowStatNu_fakeDataWeights.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_highStatNu_noWeights.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_highStatNu_fakeDataWeights.root",
     // MC only
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withoutData.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_withoutData.root",
     // Data
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withData.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_withData.root", 
     "../systcalc.conf" );
   auto& syst = *syst_ptr;

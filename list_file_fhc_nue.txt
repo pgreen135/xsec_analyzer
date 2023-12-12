@@ -3,7 +3,7 @@
 /Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_beam_off_pion_ntuples_run1_fhc.root
 /Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_beam_off_pion_ntuples_run2_fhc.root
 /Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_beam_off_pion_ntuples_run4_fhc.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_beam_off_pion_ntuples_run5_fhc.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_beam_off_pion_ntuples_run5_fhc.root
 #
 # Full beam-on data or fake data
 #/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_beam_on_pion_ntuples_run1_fhc.root
@@ -14,31 +14,34 @@
 #/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run2_fhc_slim.root
 #/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run4_fhc_slim.root
 #/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run5_fhc_slim.root
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run1_fhc_slim_subset.root
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run2_fhc_slim_subset.root
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run4_fhc_slim_subset.root
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run5_fhc_slim_subset.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run1_fhc_test_fake.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run2_fhc_test_fake.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run4_fhc_test_fake.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run5_fhc_test_fake.root
+/Volumes/MyPassport/customPeLeeNTuples/genie_fake_data/stv-numi_nu_overlay_pion_ntuples_run1_fhc.root
+/Volumes/MyPassport/customPeLeeNTuples/genie_fake_data/stv-numi_nu_overlay_pion_ntuples_run2_fhc.root
+/Volumes/MyPassport/customPeLeeNTuples/genie_fake_data/stv-numi_nu_overlay_pion_ntuples_run4_fhc.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run1_fhc_subset.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run2_fhc_subset.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run4_fhc_subset.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run5_fhc_subset.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run1_fhc_test_fake.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run2_fhc_test_fake.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run4_fhc_test_fake.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run5_fhc_test_fake.root
 #
 # Dirt MC samples
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run1_fhc_fakeweights.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run2a_fhc_fakeweights.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run4_fhc_fakeweights.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run5_fhc_fakeweights.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run1_fhc_fakeweights.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run2a_fhc_fakeweights.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run4_fhc_fakeweights.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_dirt_overlay_pion_ntuples_run5_fhc_fakeweights.root
 #
 # Intrinsic nue MC samples
 /Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run1_fhc_test.root
 /Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run2_fhc_test.root
 /Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run4_fhc_test.root
-/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run5_fhc_test.root
+#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nue_overlay_pion_ntuples_run5_fhc_test.root
 #
 # numu MC samples (standard nu overlay)
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run1_fhc.root
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run2_fhc.root
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run4_fhc.root
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run1_fhc.root
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run2_fhc.root
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run4_fhc.root
 #/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nu_overlay_pion_ntuples_run5_fhc.root
 #
 # DetVar samples
