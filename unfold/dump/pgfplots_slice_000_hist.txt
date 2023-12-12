@@ -1,3 +1,0 @@
-  FakeData  UnfData  UnfData_BNBstats_error  UnfData_DataStats_error  UnfData_EXTstats_error  UnfData_MCstats_error  UnfData_error  UnfData_total_blockwise_mixed_error  UnfData_total_blockwise_norm_error  UnfData_total_blockwise_shape_error  UnfData_total_error  bin  uBTune  x0  x0_halfwidth
-  1.56051  1.58606  0.0272537  0.0461987  0.0373035  0.026382  0.0456899  0  0.0456899  0  0.0456899  1  1.42008  0  12.5
-  0  0  0  0  0  0  0  0  0  0  0  2  0  25  12.5
