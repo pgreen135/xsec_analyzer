@@ -27,7 +27,7 @@ void bdt_stack_plots() {
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_bdt2_withData.root",    
 
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_bdt1_withData_reversedBDT.root",
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_bdt2_withData_reversedBDT.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_bdt2_withData_reversedBDT.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_bdt1_withData_reversedBDT.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_bdt2_withData_reversedBDT.root",
 
@@ -56,7 +56,7 @@ void bdt_stack_plots() {
   auto& matrix_map = *matrix_map_ptr;
 
   //auto* sb_ptr = new SliceBinning( "../bdt_slice_config_20bins.txt" );
-  auto* sb_ptr = new SliceBinning( "../bdt2_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../bdt2_slice_config.txt" );
   auto& sb = *sb_ptr;
 
   const auto& slice = sb.slices_.at( 0 ); // only considering single slice
@@ -242,15 +242,15 @@ void bdt_stack_plots() {
   // in the ROOT plot. All configured fractional uncertainties will be
   // included in the output pgfplots file regardless of whether they appear
   // in this vector.
-  const std::vector< std::string > cov_mat_keys = { "total",
-    "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
-    "MCstats", "EXTstats"
-  };
+  //const std::vector< std::string > cov_mat_keys = { "total",
+  //  "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
+  //  "MCstats", "EXTstats"
+  //};
   // show detvars
-  //const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
-  //  "detVarLYdown", "detVarLYrayl", "detVarLYatten", "detVarRecomb2", "detVarSCE", "detVarWMAngleXZ", "detVarWMAngleYZ",
-  //  "detVarWMX", "detVarWMYZ", "detVarNumu" 
-  //};  
+  const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
+    "detVarLYdown", "detVarLYrayl", "detVarLYatten", "detVarRecomb2", "detVarSCE", "detVarWMAngleXZ", "detVarWMAngleYZ",
+    "detVarWMX", "detVarWMYZ", "detVarNumu" 
+  };  
   // show beamline uncertainties
   //const std::vector< std::string > cov_mat_keys = {"total", "flux_beamline",
   //"flux_Horn_2kA", "flux_Horn1_x_3mm", "flux_Horn1_y_3mm",

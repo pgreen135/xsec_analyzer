@@ -257,6 +257,8 @@ class SystematicsCalculator {
     // Returns true if a given Universe represents a detector variation or
     // false otherwise
     bool is_detvar_universe( const Universe& univ ) const;
+    bool is_altcv_universe( const Universe& univ ) const;
+    bool is_flugg_universe( const Universe& univ ) const;
 
     // Overload for special cases in which the N*N covariance matrix does not
     // have dimension parameter N equal to the number of reco bins
@@ -329,6 +331,9 @@ class SystematicsCalculator {
     // "Alternate CV" universes for assessing unisim systematics related to
     // interaction modeling
     std::map< NFT, std::unique_ptr<Universe> > alt_cv_universes_;
+
+    // Flugg universes 
+    std::map< NFT, std::unique_ptr<Universe> > flugg_universes_;
 
     // True bin configuration that was used to compute the universes
     std::vector< TrueBin > true_bins_;
@@ -525,8 +530,9 @@ void SystematicsCalculator::load_universes( TDirectoryFile& total_subdir ) {
 
       bool is_detvar = ntuple_type_is_detVar( temp_type );
       bool is_altCV = ntuple_type_is_altCV( temp_type );
-      if ( !is_detvar && !is_altCV ) throw std::runtime_error( "Universe name "
-        + univ_name + " matches a non-detVar and non-altCV file type."
+      bool is_flugg = ntuple_type_is_flugg( temp_type );
+      if ( !is_detvar && !is_altCV && !is_flugg ) throw std::runtime_error( "Universe name "
+        + univ_name + " matches a non-detVar and non-altCV and non-Fflugg file type."
         + " Handling of this situation is currently unimplemented." );
 
       if ( is_detvar && detvar_universes_.count(temp_type) ) {
@@ -537,14 +543,22 @@ void SystematicsCalculator::load_universes( TDirectoryFile& total_subdir ) {
         throw std::runtime_error( "altCV multisims are not currently"
           " supported" );
       }
+      else if ( is_flugg && flugg_universes_.count(temp_type) ) {
+        throw std::runtime_error( "flugg multisims are not currently"
+          " supported" );
+      }
 
       // Move the detector variation Universe object into the map
       if ( is_detvar ) {
         detvar_universes_[ temp_type ].reset( temp_univ.release() );
       }
-      else { // is_altCV
+      else if (is_altCV) { // is_altCV
         alt_cv_universes_[ temp_type ].reset( temp_univ.release() );
       }
+      else { // is_flugg
+        flugg_universes_[ temp_type ].reset( temp_univ.release() );
+      }
+
     }
     // If we're working with fake data, then a single universe with a specific
     // name stores all of the MC information for the "data." Save it in the
@@ -692,6 +706,7 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
 
       bool is_detVar = ntuple_type_is_detVar( type );
       bool is_altCV = ntuple_type_is_altCV( type );
+      bool is_flugg = ntuple_type_is_flugg( type );
       bool is_reweightable_mc = ntuple_type_is_reweightable_mc( type );
       bool is_mc = ntuple_type_is_mc( type );
 
@@ -880,11 +895,9 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           
           const auto tmp_reco_hist = get_object_unique_ptr<TH1D>((CV_UNIV_NAME + "_0_reco").c_str(), *subdir);
           const auto dataContainsWeightedCV = tmp_reco_hist.get() != nullptr;
-          // std::string hist_name_prefix = "unweighted_0";
-          std::string hist_name_prefix = (dataContainsWeightedCV ? CV_UNIV_NAME : "unweighted" ) + "_0"; // todo decide whether to revert !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          //std::cout << "DEBUG hist_name_prefix: " << hist_name_prefix << std::endl;
-
           //std::string hist_name_prefix = "unweighted_0";
+          std::string hist_name_prefix = (dataContainsWeightedCV ? CV_UNIV_NAME : "unweighted" ) + "_0";
+          //std::cout << "DEBUG hist_name_prefix: " << hist_name_prefix << std::endl;
 
           auto h_reco = get_object_unique_ptr< TH1D >(
             (hist_name_prefix + "_reco"), *subdir );
@@ -912,9 +925,10 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
         } // fake data sample
 
         // Now we'll take care of the detVar and altCV samples.
-        else if ( is_detVar || is_altCV ) {
+        else if ( is_detVar || is_altCV || is_flugg ) {
 
           std::string dv_univ_name = fpm.ntuple_type_to_string( type );
+          std::cout << "DETVAR UNIV NAME: " << dv_univ_name << std::endl;
 
           // Make a temporary new Universe object to store
           // (POT-scaled) detVar/altCV histograms (if needed)
@@ -928,6 +942,7 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
 
           // Check whether a prior altCV Universe exists in the map
           bool prior_altCV = alt_cv_universes_.count( type ) > 0;
+          bool prior_flugg = flugg_universes_.count( type ) > 0;
 
           // Right now, we're assuming there's just one detVar ntuple file
           // per universe. If this assumption is violated, our scaling will
@@ -941,6 +956,9 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           // exists in the map, then get access to it via a pointer
           else if ( is_altCV && prior_altCV ) {
             temp_univ_ptr = alt_cv_universes_.at( type ).get();
+          }
+          else if ( is_flugg && prior_flugg) {
+            temp_univ_ptr = flugg_universes_.at( type ).get();
           }
           else {
             temp_univ_ptr = temp_univ.get();
@@ -965,21 +983,43 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           auto hist_reco2d = get_object_unique_ptr< TH2D >(
             "unweighted_0_reco2d", *subdir );
 
+          // use the weighted histograms for NuWroGenie uncertainty and Flugg uncertainty
+          if (dv_univ_name == "altCVMC" || dv_univ_name == "altCVMCGenieCV" || dv_univ_name == "fluggMC" || dv_univ_name == "fluggMCCV") {
+
+            hist_reco = get_object_unique_ptr< TH1D >(
+            (CV_UNIV_NAME + "_0_reco").c_str(), *subdir );
+
+            hist_true = get_object_unique_ptr< TH1D >(
+              (CV_UNIV_NAME + "_0_true").c_str(), *subdir );
+
+            hist_2d = get_object_unique_ptr< TH2D >(
+              (CV_UNIV_NAME + "_0_2d").c_str(), *subdir );
+
+            hist_categ = get_object_unique_ptr< TH2D >(
+              (CV_UNIV_NAME + "_0_categ").c_str(), *subdir );
+
+            hist_reco2d = get_object_unique_ptr< TH2D >(
+              (CV_UNIV_NAME + "_0_reco2d").c_str(), *subdir );
+          }
+          
+          
           double temp_scale_factor = 1.;
+          /* PGreen: NuMI altCV only available for single run
           if ( is_altCV ) {
             // AltCV ntuple files are available for all runs, so scale
             // each individually to the BNB data POT for the current run
             double temp_run_pot = run_to_bnb_pot_map.at( run );
             temp_scale_factor = temp_run_pot / file_pot;
           }
-          else {
+          */
+          //else {
             // Scale all detVar universe histograms from the simulated POT to
             // the *total* BNB data POT for all runs analyzed. Since we only
             // have detVar samples for Run 3b, we assume that they can be
             // applied globally in this step.
             // TODO: revisit this as appropriate
             temp_scale_factor = total_bnb_data_pot_ / file_pot;
-          }
+          //}
 
           // Apply the scaling factor defined above to all histograms that
           // will be owned by the new Universe
@@ -1007,6 +1047,9 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           }
           else if ( !prior_altCV ) { // is_altCV
             alt_cv_universes_[ type ].reset( temp_univ.release() );
+          }
+          else if ( !prior_flugg ) { // is_flugg
+            flugg_universes_[ type ].reset( temp_univ.release() );
           }
 
         } // detVar and altCV samples
@@ -1227,6 +1270,18 @@ void SystematicsCalculator::save_universes( TDirectoryFile& out_tdf ) {
 
   // Save the alternate CV MC histograms
   for ( const auto& pair : alt_cv_universes_ ) {
+    NFT type = pair.first;
+    auto& universe = pair.second;
+
+    universe->hist_reco_->Write();
+    universe->hist_true_->Write();
+    universe->hist_2d_->Write();
+    universe->hist_categ_->Write();
+    universe->hist_reco2d_->Write();
+  }
+
+  // Save the flugg MC histograms
+  for ( const auto& pair : flugg_universes_ ) {
     NFT type = pair.first;
     auto& universe = pair.second;
 
@@ -1567,15 +1622,35 @@ std::unique_ptr< CovMatrixMap > SystematicsCalculator::get_covariances() const
 
     else if ( type == "AltUniv" ) {
 
-      std::vector< const Universe* > alt_univ_vec;
-      for ( const auto& univ_pair : alt_cv_universes_ ) {
-        const auto* univ_ptr = univ_pair.second.get();
-        alt_univ_vec.push_back( univ_ptr );
-      }
+      if (useNuMI) {
+        const auto& altuniv_cv_u = alt_cv_universes_.at( NFT::kAltCVMCGenieCV );
+        const auto& altuniv_alt_u = alt_cv_universes_.at( NFT::kAltCVMC );
 
-      const auto& cv_univ = this->cv_universe();
-      make_cov_mat( *this, temp_cov_mat, cv_univ, alt_univ_vec,
+        make_cov_mat( *this, temp_cov_mat, *altuniv_cv_u,
+        *altuniv_alt_u, true, false );
+      }
+      else {
+        std::vector< const Universe* > alt_univ_vec;
+        for ( const auto& univ_pair : alt_cv_universes_ ) {
+          
+          // skip the CV universe in vector, don't want to include in variation
+          if (ntuple_type_is_altCVGenieCV(univ_pair.first)) continue;
+        
+          const auto* univ_ptr = univ_pair.second.get();
+          alt_univ_vec.push_back( univ_ptr );
+        }
+        const auto& cv_univ = this->cv_universe();
+        make_cov_mat( *this, temp_cov_mat, cv_univ, alt_univ_vec,
         true, false );
+      }
+    }
+    else if ( type == "FluggUniv" && useNuMI ) {
+
+        const auto& flugguniv_cv_u = flugg_universes_.at( NFT::kFluggMCCV );
+        const auto& flugguniv_alt_u = flugg_universes_.at( NFT::kFluggMC );
+
+        make_cov_mat( *this, temp_cov_mat, *flugguniv_cv_u,
+        *flugguniv_alt_u, true, false );
     }
 
     // Complain if we don't know how to calculate the requested covariance
@@ -1618,6 +1693,38 @@ bool SystematicsCalculator::is_detvar_universe( const Universe& univ ) const {
 
   bool found_detvar_universe = ( iter != end );
   return found_detvar_universe;
+}
+// Similar hack for altCV universe to allow CV universe to be swapped
+bool SystematicsCalculator::is_altcv_universe( const Universe& univ ) const {
+
+  using AltCVMapElement = std::pair< const NFT, std::unique_ptr<Universe> >;
+
+  const auto begin = alt_cv_universes_.cbegin();
+  const auto end = alt_cv_universes_.cend();
+
+  const auto iter = std::find_if( begin, end,
+    [ &univ ]( const AltCVMapElement& my_pair )
+      -> bool { return my_pair.second.get() == &univ; }
+  );
+
+  bool found_altcv_universe = ( iter != end );
+  return found_altcv_universe;
+}
+// and for Flugg universe
+bool SystematicsCalculator::is_flugg_universe( const Universe& univ ) const {
+
+  using FluggMapElement = std::pair< const NFT, std::unique_ptr<Universe> >;
+
+  const auto begin = flugg_universes_.cbegin();
+  const auto end = flugg_universes_.cend();
+
+  const auto iter = std::find_if( begin, end,
+    [ &univ ]( const FluggMapElement& my_pair )
+      -> bool { return my_pair.second.get() == &univ; }
+  );
+
+  bool found_flugg_universe = ( iter != end );
+  return found_flugg_universe;
 }
 
 // Returns the smearceptance matrix in the requested Universe

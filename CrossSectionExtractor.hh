@@ -22,11 +22,13 @@
 #include "SystematicsCalculator.hh"
 #include "WienerSVDUnfolder.hh"
 
+#include "utils.hh"
+
 using WSVD_RMT = WienerSVDUnfolder::RegularizationMatrixType;
 using MCC9SystMode = MCC9SystematicsCalculator::SystMode;
 
 constexpr double BIG_DOUBLE = 1e300;
-//constexpr bool USE_ADD_SMEAR = true;
+constexpr bool USE_ADD_SMEAR = true;
 constexpr bool INCLUDE_BKGD_ONLY_ERRORS = false;
 constexpr bool INCLUDE_SIGRESP_ONLY_ERRORS = false;
 
@@ -379,21 +381,93 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
   UnfoldedMeasurement result = unfolder_->unfold( *syst_ );
   CrossSectionResult xsec( result );
 
-  //if ( USE_ADD_SMEAR ) {
+  if ( USE_ADD_SMEAR ) {
 
-  //  // Get access to the additional smearing matrix
-  //  const TMatrixD& A_C = *xsec.result_.add_smear_matrix_;
+    // Get access to the additional smearing matrix
+    const TMatrixD& A_C = *xsec.result_.add_smear_matrix_;
 
-  //  // Update each of the owned predictions by multiplying them by the
-  //  // additional smearing matrix
-  //  for ( auto& pair : pred_map_ ) {
-  //    //const auto& model_description = pair.first;
-  //    TMatrixD& truth_pred = pair.second->get_prediction();
+    // Update each of the owned predictions by multiplying them by the
+    // additional smearing matrix
+    for ( auto& pair : pred_map_ ) {
+      const auto& model_description = pair.first;
+      TMatrixD& truth_pred = pair.second->get_prediction();
+      std::cout << "model_description: " << model_description << std::endl;
 
-  //    TMatrixD ac_temp( A_C, TMatrixD::kMult, truth_pred );
-  //    truth_pred = ac_temp;
-  //  }
-  //}
+      TMatrixD ac_temp( A_C, TMatrixD::kMult, truth_pred );
+      truth_pred = ac_temp;
+    }
+
+
+    // Plot the smearing matrix
+    const Int_t n = 5;
+    Double_t bins[n+1] = {0, 6, 11, 16, 18, 19};
+    const Char_t *labels[n] = {"E_{e}", "cos(#beta_{e})", "cos(#beta_{#pi})", "N_{p}", "Total"};
+
+    // Convert TMatrixD to TH2D using the TMatrixDToTH2D function
+    TH2D h_A_C = util::TMatrixDToTH2D(A_C, "h_A_C", "Additional smearing matrix", 0, A_C.GetNcols(), 0, A_C.GetNrows());
+
+    gStyle->SetPalette(kBird);
+
+    TCanvas *c_ac = new TCanvas("c_ac","A_C Matrix",200,10,700,500);
+    c_ac->SetRightMargin(0.15);
+    h_A_C.SetStats(0); // Disable the statistics box
+    h_A_C.GetZaxis()->SetRangeUser(-2, 2); // Set the z range
+    h_A_C.Draw("colz");
+    h_A_C.GetXaxis()->SetTitle("Bin Index");
+    h_A_C.GetYaxis()->SetTitle("Bin Index");
+    c_ac->Update();
+
+    // Draw vertical and horizontal lines at the bin edges
+    for (Int_t i = 1; i < n; i++) {
+        TLine *vline = new TLine(bins[i], 0, bins[i], h_A_C.GetNbinsY());
+        vline->SetLineColor(kBlack);
+        vline->Draw();
+
+        TLine *hline = new TLine(0, bins[i], h_A_C.GetNbinsX(), bins[i]);
+        hline->SetLineColor(kBlack);
+        hline->Draw();
+    }
+
+    for (Int_t i = 1; i <= n; i++) {
+        // Draw white dotted lines from bins[i-1] to bins[i]
+        TLine *vline_dotted1 = new TLine(bins[i], bins[i-1], bins[i], bins[i]);
+        vline_dotted1->SetLineColor(kWhite);
+        vline_dotted1->SetLineStyle(2); // Set line style to dotted
+        vline_dotted1->Draw();
+
+        TLine *hline_dotted1 = new TLine(bins[i-1], bins[i], bins[i], bins[i]);
+        hline_dotted1->SetLineColor(kWhite);
+        hline_dotted1->SetLineStyle(2); // Set line style to dotted
+        hline_dotted1->Draw();
+
+        if(i<n)
+        {
+            TLine *vline_dotted2 = new TLine(bins[i], bins[i+1], bins[i], bins[i]);
+            vline_dotted2->SetLineColor(kWhite);
+            vline_dotted2->SetLineStyle(2); // Set line style to dotted
+            vline_dotted2->Draw();
+
+            TLine *hline_dotted2 = new TLine(bins[i+1], bins[i], bins[i], bins[i]);
+            hline_dotted2->SetLineColor(kWhite);
+            hline_dotted2->SetLineStyle(2); // Set line style to dotted
+            hline_dotted2->Draw();
+        }
+    }
+
+    // Add labels in the middle of the intervals
+    for (Int_t i = 0; i < n; i++) {
+        Double_t midPoint = i==n-1 ? bins[i+1] + 1 : (bins[i] + bins[i+1]) / 2.0;
+        TLatex *text = new TLatex(midPoint, 1.03*h_A_C.GetNbinsY(), labels[i]);
+        text->SetTextSize(0.03); // Set text size to something smaller
+        text->SetTextAlign(22); // Center alignment
+        text->Draw();
+        // delete text;
+    }
+
+    c_ac->SaveAs("dump/plot_entire_additional_smearing_matrix_nuwro.pdf");
+    
+
+  }
 
   // Propagate all defined covariance matrices through the unfolding procedure
   // using the "error propagation matrix" and its transpose

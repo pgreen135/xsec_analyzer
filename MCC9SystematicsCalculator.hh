@@ -72,7 +72,9 @@ double MCC9SystematicsCalculator::evaluate_observable( const Universe& univ,
   int reco_block_index = rbin.block_index_;
 
   bool use_detVar_CV = this->is_detvar_universe( univ );
-
+  bool use_altCV_CV = this->is_altcv_universe( univ );
+  bool use_flugg_CV = this->is_flugg_universe( univ );
+  
   // Get access to the CV universe. We need it regardless of the input universe
   // so that we can use it in the denominator of the smearceptance matrix
   // element. Note that we should use the detVarCV universe as the CV when the
@@ -82,6 +84,14 @@ double MCC9SystematicsCalculator::evaluate_observable( const Universe& univ,
   const Universe* cv_univ = nullptr;
   if ( use_detVar_CV ) {
     cv_univ = detvar_universes_.at( NFT::kDetVarMCCV ).get();
+  }
+  else if ( use_altCV_CV ) {
+    // use altCVMC CV universe for altCV MC
+    cv_univ = alt_cv_universes_.at( NFT::kAltCVMCGenieCV ).get();
+  }
+  else if ( use_flugg_CV ) {
+    // use fluggMC CV universe for flugg MC
+    cv_univ = flugg_universes_.at( NFT::kFluggMCCV ).get();
   }
   else {
     cv_univ = &this->cv_universe();
@@ -216,7 +226,9 @@ double MCC9SystematicsCalculator::evaluate_observable( const Universe& univ,
   int reco_block_index = rbin.block_index_;
 
   bool use_detVar_CV = this->is_detvar_universe( univ );
-
+  bool use_altCV_CV = this->is_altcv_universe( univ );
+  bool use_flugg_CV = this->is_flugg_universe( univ );
+ 
   // Get access to the CV universe. We need it regardless of the input universe
   // so that we can use it in the denominator of the smearceptance matrix
   // element. Note that we should use the detVarCV universe as the CV when the
@@ -226,6 +238,14 @@ double MCC9SystematicsCalculator::evaluate_observable( const Universe& univ,
   const Universe* cv_univ = nullptr;
   if ( use_detVar_CV ) {
     cv_univ = detvar_universes_.at( NFT::kDetVarMCCV ).get();
+  }
+  else if ( use_altCV_CV ) {
+    // use altCVMC CV universe for altCV MC
+    cv_univ = alt_cv_universes_.at( NFT::kAltCVMCGenieCV ).get();
+  }
+  else if ( use_flugg_CV ) {
+    // use fluggMC CV universe for flugg MC
+    cv_univ = flugg_universes_.at( NFT::kFluggMCCV ).get();
   }
   else {
     cv_univ = &this->cv_universe();

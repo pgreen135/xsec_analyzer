@@ -17,25 +17,32 @@
 
 using NFT = NtupleFileType;
 
-void singlebin_stack_plots() {
+void scale_by_bin_width(SliceHistogram* pSlice)
+{
+    int num_slice_bins = pSlice->hist_->GetNbinsX();
+    TMatrixD trans_mat( num_slice_bins, num_slice_bins );
+    for ( int b = 0; b < num_slice_bins; ++b ) {
+      const auto width = pSlice->hist_->GetBinWidth( b + 1 );
+      // width *= other_var_width;
+      trans_mat( b, b ) = 1 / width;
+    }
+    pSlice->transform(trans_mat);
+}
+
+void variable_stack_plots() {
+
+  bool normaliseByBinWidth = true;
 
   auto* syst_ptr = new MCC9SystematicsCalculator(
-    // Retrained BDTs
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withdata.root",
-    // Fake Data
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_NuWroFakeData_nueOnly_withPPFX.root",
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singleBin_NuWroFakeData_NuWroGenieUncertainty.root", 
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_GenieFakeData_fakeDataWeights.root",
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_GenieFakeData_fakeDataWeights.root",
-    // MC only
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withoutData.root",
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_withoutData.root",
-    // no data
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_noData_withNuWroUncertainty.root",
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_noData_withNuWroUncertainty.root",
-    // Data
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withData.root",
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_withData.root", 
+    
+    // Full
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withoutData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData.root",  // all slices
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData_FluggUncertainty.root",
+
     "../systcalc.conf" );
   auto& syst = *syst_ptr;
 
@@ -60,10 +67,13 @@ void singlebin_stack_plots() {
   auto* matrix_map_ptr = syst.get_covariances().release();
   auto& matrix_map = *matrix_map_ptr;
 
-  auto* sb_ptr = new SliceBinning( "../singlebin_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../electron_energy_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../electron_angle_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../pion_angle_slice_config.txt" );
+  auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
   auto& sb = *sb_ptr;
 
-  const auto& slice = sb.slices_.at( 0 ); // only considering single slice
+  const auto& slice = sb.slices_.at( 0 ); // only considering single slice at a time
 
   // We now have all of the reco bin space histograms that we need as input.
   // Use them to make new histograms in slice space.
@@ -87,9 +97,10 @@ void singlebin_stack_plots() {
   eci.set_ext_histogram_style( slice_ext->hist_.get() );
 
   THStack* slice_pred_stack = new THStack( "mc+ext", "" );
-  
-  slice_pred_stack->Add( slice_ext->hist_.get() ); // extBNB
 
+  if (normaliseByBinWidth) scale_by_bin_width(slice_ext);
+  slice_pred_stack->Add( slice_ext->hist_.get() ); // extBNB
+  
   const auto& cat_map = eci.label_map();
 
   // Legend
@@ -101,7 +112,6 @@ void singlebin_stack_plots() {
 
   // Go in reverse so that signal ends up on top. Note that this index is
   // one-based to match the ROOT histograms
-  
   int cat_bin_index = cat_map.size();
   
   for ( auto iter = cat_map.crbegin(); iter != cat_map.crend(); ++iter )
@@ -117,6 +127,8 @@ void singlebin_stack_plots() {
 
     eci.set_mc_histogram_style( cat, temp_slice_mc->hist_.get() );
 
+    if (normaliseByBinWidth) scale_by_bin_width(temp_slice_mc);
+
     slice_pred_stack->Add( temp_slice_mc->hist_.get() );
 
     std::string cat_col_prefix = "MC" + std::to_string( cat );
@@ -125,7 +137,7 @@ void singlebin_stack_plots() {
 
     --cat_bin_index;
   }
-  
+
   // Second loop to construct legend in desired order
   cat_bin_index = 1;
   for ( auto iter = cat_map.begin(); iter != cat_map.end(); ++iter )
@@ -148,25 +160,39 @@ void singlebin_stack_plots() {
 
   leg->AddEntry(slice_ext->hist_.get(), "EXT", "f");
   
+  TCanvas* c1 = new TCanvas("", "", 1080, 1080);
+  TPad *upperPad = new TPad("upperPad", "Upper Pad", 0.01, 0.25, 0.99, 0.99);
+  TPad *lowerPad = new TPad("lowerPad", "Lower Pad", 0.01, 0.01, 0.99, 0.24);
+  upperPad->Draw();
+  lowerPad->Draw();
 
-  TCanvas* c1 = new TCanvas;
-  c1->SetTopMargin(0.14);
+  upperPad->cd();  // Switch to the upper pad
+  gPad->SetBottomMargin(0.0125);
+  gPad->SetTopMargin(0.14);
 
   slice_bnb->hist_->SetLineColor( kBlack );
   slice_bnb->hist_->SetLineWidth( 3 );
   slice_bnb->hist_->SetMarkerStyle( kFullCircle );
   slice_bnb->hist_->SetMarkerSize( 0.8 );
   slice_bnb->hist_->SetStats( false );
+
+  if (normaliseByBinWidth) scale_by_bin_width(slice_bnb);
+  if (normaliseByBinWidth) scale_by_bin_width(slice_mc_plus_ext);
+
   double ymax = std::max( slice_bnb->hist_->GetMaximum(),
-    slice_mc_plus_ext->hist_->GetMaximum() ) * 1.07;
-  slice_bnb->hist_->GetYaxis()->SetRangeUser( 0., 100); //// ymax );
+    slice_mc_plus_ext->hist_->GetMaximum() ) * 1.4;
+  slice_bnb->hist_->GetYaxis()->SetRangeUser( 0., ymax );
   slice_bnb->hist_->SetTitle("");
+  
+  slice_bnb->hist_->GetXaxis()->SetLabelOffset(999); // Hide X-axis labels
+  slice_bnb->hist_->GetXaxis()->SetTitleOffset(999); // Hide X-axis labels
+  slice_bnb->hist_->GetXaxis()->SetTickLength(0.01);
 
   slice_bnb->hist_->Draw( "e" );
 
   slice_pred_stack->Draw( "hist same" );
 
-  slice_mc_plus_ext->hist_->SetLineWidth( 3 );
+  slice_mc_plus_ext->hist_->SetLineWidth( 3 ); // 3
 
   slice_mc_plus_ext->hist_->SetMarkerColor(kBlack);
   slice_mc_plus_ext->hist_->SetLineColor(kBlack);
@@ -186,17 +212,25 @@ void singlebin_stack_plots() {
   char labelText2[100];
   char labelText3[100];
   char labelText4[100];
-  sprintf(labelText1, "RHC");
-  //sprintf(labelText2, "7.766e+20 POT");
-  sprintf(labelText2, "11.082e+20 POT");
+  char labelText5[100];
+  sprintf(labelText1, "FHC + RHC");
+  sprintf(labelText2, "1.8848e+21 POT");
+  //sprintf(labelText2, "Flugg Fake Data");
   sprintf(labelText3, "#chi^{2} = %.2f / %d Bins", chi2_result.chi2_, chi2_result.num_bins_);
   sprintf(labelText4, "p-value = %.2f", chi2_result.p_value_);
+  sprintf(labelText5, "%.1f #sigma", TMath::Sqrt( TMath::ChisquareQuantile( 1 - chi2_result.p_value_, 1 ) ));
   label.SetTextSize(0.04);
-  label.DrawLatex(0.7, 0.80, labelText1);
-  label.DrawLatex(0.7, 0.75, labelText2);
-  //label.DrawLatex(0.7, 0.70, labelText3);
-  //label.DrawLatex(0.25, 0.65, labelText4);
+  label.DrawLatex(0.65, 0.80, labelText1);
+  label.DrawLatex(0.65, 0.75, labelText2);
+  label.DrawLatex(0.65, 0.70, labelText3);
+  label.DrawLatex(0.65, 0.65, labelText4);
+  //label.DrawLatex(0.65, 0.60, labelText5);
 
+  //label.DrawLatex(0.2, 0.80, labelText1);
+  //label.DrawLatex(0.2, 0.75, labelText2);
+  //label.DrawLatex(0.2, 0.70, labelText3);
+  //label.DrawLatex(0.2, 0.65, labelText4);
+  //label.DrawLatex(0.2, 0.60, labelText5);
 
   // draw legend
   leg->Draw("Same");
@@ -206,6 +240,43 @@ void singlebin_stack_plots() {
   std::cout << "Data events: " << slice_bnb->hist_.get()->Integral() << std::endl;
   std::cout << "EXT events: " << slice_ext->hist_.get()->Integral() << std::endl;
   std::cout << "MC+EXT events: " << slice_mc_plus_ext->hist_->Integral() << std::endl;
+
+  // Create and draw the ratio plot
+  TH1D *h_ratio = (TH1D*)slice_bnb->hist_.get()->Clone("h_ratio");
+  TH1D *h_ratio_error = (TH1D*)slice_mc_plus_ext->hist_.get()->Clone("h_ratio_error");
+  TH1D *h_ratio_values = (TH1D*)slice_mc_plus_ext->hist_.get()->Clone("h_ratio_values");
+  
+  for(int i=0 ; i <= h_ratio_values->GetNbinsX() ; i++){
+    h_ratio_values->SetBinError(i, 0);
+  }
+  
+  //h_ratio->Divide(slice_mc_plus_ext->hist_.get());
+  h_ratio->Divide(h_ratio_values);
+
+  h_ratio_error->Divide(h_ratio_values);
+
+  lowerPad->cd();  // Switch to the lower pad
+  gPad->SetBottomMargin(0.35);
+
+  h_ratio->GetYaxis()->SetRangeUser( 0, 2 );
+  h_ratio->GetYaxis()->SetTitle("Ratio");
+  h_ratio->GetYaxis()->SetTitleSize(0.12);
+  h_ratio->GetYaxis()->SetTitleOffset(0.325);
+  h_ratio->GetYaxis()->SetLabelSize(0.12);
+  h_ratio->GetYaxis()->SetNdivisions(505);
+
+  h_ratio->SetBit(TH1::kNoTitle);
+
+  h_ratio->GetXaxis()->SetLabelSize(0.12);  // Adjust X-axis label size
+  h_ratio->GetXaxis()->SetLabelOffset(0.01);
+  h_ratio->GetXaxis()->SetTitleSize(0.12);
+  h_ratio->GetXaxis()->SetTitleOffset(1.0);
+  h_ratio->GetXaxis()->SetTickLength(0.03);
+  h_ratio->Draw();
+  h_ratio_error->Draw("e2 same");
+
+
+  std::cout << "Bin 1 error: " << h_ratio->GetBinError(1) << std::endl;
 
   // Get the binning and axis labels for the current slice by cloning the
   // (empty) histogram owned by the Slice object
@@ -224,13 +295,17 @@ void singlebin_stack_plots() {
   // in this vector.
   const std::vector< std::string > cov_mat_keys = { "total",
     "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
-    "MCstats", "EXTstats", "NuWroGenie"
+    "MCstats", "EXTstats", "NuWroGenie", "Flugg"
   };
+  
   // show detvars
-  //const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
-  //  "detVarLYdown", "detVarLYrayl", "detVarLYatten", "detVarRecomb2", "detVarSCE", "detVarWMAngleXZ", "detVarWMAngleYZ",
-  //  "detVarWMX", "detVarWMYZ", "detVarNumu" 
-  //};  
+  /*
+  const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
+    "detVarLYdown", "detVarLYrayl", "detVarLYatten", "detVarRecomb2", "detVarSCE", "detVarWMAngleXZ", "detVarWMAngleYZ",
+    "detVarWMX", "detVarWMYZ", "detVarNumu" 
+  };
+  */
+      
   // show beamline uncertainties
   //const std::vector< std::string > cov_mat_keys = {"total", "flux_beamline",
   //"flux_Horn_2kA", "flux_Horn1_x_3mm", "flux_Horn1_y_3mm",
@@ -279,7 +354,7 @@ void singlebin_stack_plots() {
     if ( color >= 10 ) color += 10;
 
     slice_for_syst->hist_->SetLineColor( color );
-    slice_for_syst->hist_->SetLineWidth( 3 );
+    slice_for_syst->hist_->SetLineWidth( 4 );
   }
 
   TCanvas* c2 = new TCanvas;
@@ -292,14 +367,14 @@ void singlebin_stack_plots() {
   total_frac_err_hist->GetYaxis()->SetRangeUser( 0., 0.5);
   //total_frac_err_hist->GetMaximum() * 1.05 );
   total_frac_err_hist->SetLineColor( kBlack );
-  total_frac_err_hist->SetLineWidth( 3 );
-  total_frac_err_hist->SetTitle("FHC");
+  total_frac_err_hist->SetLineWidth( 5 );
+  total_frac_err_hist->SetTitle("Electron Energy");
   total_frac_err_hist->GetYaxis()->SetTitle("Fractional Uncertainty");
   total_frac_err_hist->Draw( "hist" );
 
   stringstream ss; ss.precision(1);
   ss << std::fixed << "Total";
-  ss << ": " << total_frac_err_hist->GetBinContent( 1 )*100. << "%";
+  //ss << ": " << total_frac_err_hist->GetBinContent( 1 )*100. << "%";
   string label_str = ss.str();
 
   lg2->AddEntry( total_frac_err_hist, label_str.c_str(), "l" );
@@ -326,7 +401,7 @@ void singlebin_stack_plots() {
     ss << std::fixed; 
     if (name_alt != "") ss << name_alt; 
     else ss << name;
-    ss << ": " << hist->GetBinContent( 1 )*100. << "%";
+    //ss << ": " << hist->GetBinContent( 1 )*100. << "%";
     string label_str = ss.str();
     lg2->AddEntry( hist, label_str.c_str(), "l" );
     hist->Draw( "same hist" );
@@ -342,6 +417,6 @@ void singlebin_stack_plots() {
 }
 
 int main() {
-  singlebin_stack_plots();
+  variable_stack_plots();
   return 0;
 }

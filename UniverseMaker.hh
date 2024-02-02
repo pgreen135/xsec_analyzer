@@ -65,9 +65,16 @@ constexpr double MAX_WEIGHT = 30.;
 
 // Event weights that are below MIN_WEIGHT, above MAX_WEIGHT, infinite, or NaN
 // are reset to unity by this function. Other weights are returned unaltered.
-inline double safe_weight( double w ) {
+inline double safe_weight( double w, double normalisation_weight = 1 ) {
   if ( std::isfinite(w) && w >= MIN_WEIGHT && w <= MAX_WEIGHT ) return w;
-  else return 1.0;
+  else {
+    // make sure to still apply normalisation scaling (NuMI)
+    double safe_wgt = 1.0;
+    if (useNuMI) {
+      safe_wgt *= normalisation_weight;
+    }
+    return safe_wgt;
+  }
 }
 
 // Utility function used to check endings of (trimmed) weight labels based on
@@ -86,9 +93,7 @@ bool string_has_end( const std::string& str, const std::string& end ) {
 // TODO: include the rootino_fix weight as a correction to the central value
 void apply_cv_correction_weights( const std::string& wgt_name,
   double& wgt, double spline_weight, double tune_weight, double ppfx_weight = 1, double normalisation_weight = 1 )
-{ 
-  
-  //wgt = 1;
+{
 
   if ( string_has_end(wgt_name, "UBGenie") ) {
     if (useNuMI) wgt *= spline_weight * ppfx_weight * normalisation_weight;
@@ -133,6 +138,7 @@ void apply_cv_correction_weights( const std::string& wgt_name,
     std::cout << "Unrecognized weight name: " << wgt_name << std::endl;
     throw std::runtime_error( "Unrecognized weight name" );
   }
+  
   
 }
 
@@ -618,11 +624,19 @@ void UniverseMaker::build_universes(
   float tune_weight_numi = 1;
   float ppfx_weight_numi = 1;
   float normalisation_weight_numi = 1;
+
+  bool hasFakeDataWeight = false;
+  float fake_data_weight_numi = -1;
+
   if (useNuMI) {
     input_chain_.SetBranchAddress( "spline_weight", &spline_weight_numi );
     input_chain_.SetBranchAddress( "tuned_cv_weight", &tune_weight_numi );
     input_chain_.SetBranchAddress( "ppfx_cv_weight", &ppfx_weight_numi );
     input_chain_.SetBranchAddress( "normalisation_weight", &normalisation_weight_numi );
+    int checkBranch = input_chain_.SetBranchAddress( "fake_data_weight", &fake_data_weight_numi );
+    if (checkBranch == 0) {
+      hasFakeDataWeight = true;
+    }
   }
 
   // Get the first TChain entry so that we can know the number of universes
@@ -633,6 +647,7 @@ void UniverseMaker::build_universes(
   this->prepare_universes( wh );
 
   int treenumber = 0;
+
   for ( long long entry = 0; entry < input_chain_.GetEntries(); ++entry ) {
     // Load the TTree for the current TChain entry
     input_chain_.LoadTree( entry );
@@ -671,14 +686,13 @@ void UniverseMaker::build_universes(
     }
 
     input_chain_.GetEntry( entry );
-    //std::cout << "Entry " << entry << '\n';
-
+   
     std::vector< FormulaMatch > matched_true_bins;
     double spline_weight = 0.;
     double tune_weight = 0.;
     double ppfx_weight = 0.;          // NuMI-specific
     double normalisation_weight = 0.; // NuMI-specific
-
+    
     // If we're working with an MC sample, then find the true bin(s)
     // that should be filled for the current event
     if ( is_mc ) {
@@ -701,6 +715,14 @@ void UniverseMaker::build_universes(
         tune_weight = tune_weight_numi;
         ppfx_weight = ppfx_weight_numi;
         normalisation_weight = normalisation_weight_numi;
+
+        // additional scaling factor for fake data to allow signal enhanced samples to be combined
+        // only applied if branch is present in NTuple
+        if (hasFakeDataWeight) {
+          normalisation_weight *= fake_data_weight_numi;
+          //std::cout << "Fake Data Weight: " << fake_data_weight_numi << ", Norm weight: " << normalisation_weight << std::endl;
+        }
+
       }
       else {
         auto& wm = wh.weight_map();
@@ -728,7 +750,9 @@ void UniverseMaker::build_universes(
         else apply_cv_correction_weights( wgt_name, w, spline_weight, tune_weight );
 
         // Deal with NaNs, etc. to make a "safe weight" in all cases
-        double safe_wgt = safe_weight( w );
+        double safe_wgt;
+        if (useNuMI) safe_wgt = safe_weight( w, normalisation_weight );
+        else safe_wgt = safe_weight( w );
 
         // Get the universe object that should be filled with the processed
         // event weight
@@ -792,6 +816,7 @@ void UniverseMaker::build_universes(
   } // TChain entries
 
   input_chain_.ResetBranchAddresses();
+
 }
 
 void UniverseMaker::prepare_universes( const WeightHandler& wh ) {

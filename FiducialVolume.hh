@@ -29,14 +29,16 @@ inline bool point_inside_FV( const TVector3& pos ) {
 }
 
 // Returns the number of Ar nuclei inside the fiducial volume
+// PGreen: Changed to per nucleon, to allow direct comparison with other uboone Nue X-Secs
 inline double num_Ar_targets_in_FV() {
   double volume = ( FV_X_MAX - FV_X_MIN ) * ( FV_Y_MAX - FV_Y_MIN )
     * ( FV_Z_MAX - FV_Z_MIN ); // cm^3
   constexpr double m_mol_Ar = 39.948; // g/mol
   constexpr double N_Avogadro = 6.02214076e23; // mol^(-1)
   constexpr double mass_density_LAr = 1.3836; // g/cm^3
+  constexpr double n_nuc = 40; // Ar nucleons
 
-  double num_Ar = volume * mass_density_LAr * N_Avogadro / m_mol_Ar;
+  double num_Ar = volume * mass_density_LAr * N_Avogadro * n_nuc / m_mol_Ar;
   return num_Ar;
 }
 
@@ -55,13 +57,26 @@ inline double integrated_numu_flux_in_FV( double pot ) {
   // root [4] hEnumu_cv->Integral()
   // (double) 7.3762291e-10
   // See the README file in that same folder for details.
+  
+  // normal
+  /*
   double numu_per_cm2_per_POT_in_AV;
   if (useNuMI) {
-    numu_per_cm2_per_POT_in_AV = 1.844847e-11; // FHC NuMI Nue - Value from Krishan's thesis, need to update.
+    //numu_per_cm2_per_POT_in_AV = 1.844847e-11; // FHC NuMI Nue + Nuebar - Value from Krishan's thesis.
+    numu_per_cm2_per_POT_in_AV = 1.84609e-11; // FHC NuMI Nue + Nuebar
+    //numu_per_cm2_per_POT_in_AV = 1.71474e-11; // RHC NuMI Nue + Nuebar
   }
   else {
     numu_per_cm2_per_POT_in_AV = 7.3762291e-10;
   }
   double flux = pot * numu_per_cm2_per_POT_in_AV; // numu / cm^2
+  */
+
+  // combined
+  // genie fake data
+  double flux = 1.844847e-11 * 12.22453e21 + 1.71474e-11 * 10.84891e21;
+  // nuwro fake data
+  //double flux = 1.844847e-11 * 17.09056e21;
+
   return flux;
 }

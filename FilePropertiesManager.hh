@@ -43,6 +43,11 @@ enum class NtupleFileType {
 
   // An alternate CV MC simulation
   kAltCVMC,
+  kAltCVMCGenieCV,
+
+  // An alternate Flugg flux MC simulation
+  kFluggMC,
+  kFluggMCCV, 
 
   // Placeholder for invalid values
   kUnknown,
@@ -67,7 +72,22 @@ bool ntuple_type_is_detVar( const NtupleFileType& type ) {
 }
 
 bool ntuple_type_is_altCV( const NtupleFileType& type ) {
-  if ( type == NtupleFileType::kAltCVMC ) return true;
+  if ( type == NtupleFileType::kAltCVMC ||  type == NtupleFileType::kAltCVMCGenieCV ) return true;
+  return false;
+}
+
+bool ntuple_type_is_altCVGenieCV( const NtupleFileType& type ) {
+  if ( type == NtupleFileType::kAltCVMCGenieCV ) return true;
+  return false;
+}
+
+bool ntuple_type_is_flugg( const NtupleFileType& type ) {
+  if ( type == NtupleFileType::kFluggMC ||  type == NtupleFileType::kFluggMCCV ) return true;
+  return false;
+}
+
+bool ntuple_type_is_fluggCV( const NtupleFileType& type ) {
+  if ( type == NtupleFileType::kFluggMCCV ) return true;
   return false;
 }
 
@@ -298,6 +318,9 @@ class FilePropertiesManager {
       { "detVarWMYZ", NtupleFileType::kDetVarMCWMYZ },
       { "detVarCVExtra", NtupleFileType::kDetVarMCCVExtra },
       { "altCVMC", NtupleFileType::kAltCVMC },
+      { "altCVMCGenieCV", NtupleFileType::kAltCVMCGenieCV },
+      { "fluggMC", NtupleFileType::kFluggMC },
+      { "fluggMCCV", NtupleFileType::kFluggMCCV },
     };
 
     // Folder that stores the STV analysis configuration files. This is set

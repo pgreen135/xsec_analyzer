@@ -129,10 +129,13 @@ void dump_overall_results( const UnfoldedMeasurement& result,
   }
 }
 
-void singlebin_unfolding_refactor() {
+void variable_unfolding_refactor() {
 
   // Use a CrossSectionExtractor object to handle the systematics and unfolding
-  auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config.txt" );
+  //auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_electron_energy.txt" );
+  //auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_electron_angle.txt" );
+  //auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_pion_angle.txt" );
+  auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_nuecc1pi.txt" );  
   auto xsec = extr->get_unfolded_events();
   double conv_factor = extr->conversion_factor();
 
@@ -143,8 +146,10 @@ void singlebin_unfolding_refactor() {
     1.0 / conv_factor, extr->get_prediction_map() );
 
   //// Plot slices of the unfolded result
-  auto* sb_ptr = new SliceBinning( "../singlebin_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../test_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../electron_energy_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../electron_angle_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../pion_angle_slice_config.txt" );
+  auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
   auto& sb = *sb_ptr;
 
   // Keys are generator names and versions, values are TruthFileInfo objects
@@ -276,7 +281,7 @@ void singlebin_unfolding_refactor() {
   for ( int b = 0; b < num_slice_bins; ++b ) {
     double width = slice_unf->hist_->GetBinWidth( b + 1 );
     width *= other_var_width;
-    trans_mat( b, b ) = 1 / (conv_factor*width);
+    trans_mat( b, b ) = ( 1 / (conv_factor*width));
   }
 
   std::string slice_y_title;
@@ -353,7 +358,11 @@ void singlebin_unfolding_refactor() {
   slice_unf->hist_->SetMarkerSize( 0.8 );
   slice_unf->hist_->SetStats( false );
 
-  slice_unf->hist_->SetTitle("FHC NuWro Fake Data, #nu_{e} overlay only");
+  //slice_unf->hist_->SetTitle("FHC NuWro Fake Data (#nu_{e} only)");
+  //slice_unf->hist_->SetTitle("FHC+RHC Genie Fake Data");
+  //slice_unf->hist_->SetTitle("Proton Multiplicity");
+  slice_unf->hist_->SetTitle("Electron Energy");
+  //slice_unf->hist_->SetTitle("Total");
 
   double ymax = -DBL_MAX;
   slice_unf->hist_->Draw( "e" );
@@ -388,15 +397,19 @@ void singlebin_unfolding_refactor() {
     slice_truth->hist_->Draw( "hist same" );
   }
 
-  slice_unf->hist_->GetYaxis()->SetRangeUser( 0., 1.2 );
+  slice_unf->hist_->GetYaxis()->SetRangeUser( 0., 1.4 );
   slice_unf->hist_->Draw( "e same" );
 
-  TLegend* lg = new TLegend( 0.175, 0.3, 0.875, 0.5 );
+  TLegend* lg = new TLegend( 0.175, 0.675, 0.875, 0.875 );
   for ( const auto& pair : slice_gen_map ) {
     const auto& name = pair.first;
     const auto* slice_h = pair.second;
 
     std::string label = name;
+
+    if (label == "truth") label = "Flugg";
+    if (label == "MicroBooNE Tune") label = "PPFX";
+
     std::ostringstream oss;
     const auto& chi2_result = chi2_map.at( name );
     oss << std::setprecision( 3 ) << chi2_result.chi2_ << " / "
@@ -471,6 +484,6 @@ void singlebin_unfolding_refactor() {
 }
 
 int main() {
-  singlebin_unfolding_refactor();
+  variable_unfolding_refactor();
   return 0;
 }
