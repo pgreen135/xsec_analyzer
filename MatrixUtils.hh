@@ -66,7 +66,8 @@ std::unique_ptr< TMatrixD > invert_matrix( const TMatrixD& mat,
       if ( a == b ) expected_element = 1.;
       double abs_diff = std::abs( element - expected_element );
       if ( abs_diff > inversion_tolerance ) {
-        throw std::runtime_error( "Matrix inversion failed" );
+        std::cout << "Matrix inversion failed: abs_diff = " << abs_diff << std::endl;
+        throw std::runtime_error( "Matrix inversion failed: ");
       }
     }
   }

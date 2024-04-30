@@ -181,8 +181,6 @@ TH2D TMatrixDToTH2D(const TMatrixD & mat, const char* name, const char* title, d
     for (int i = 0; i < nX; ++i) {
         for (int j = 0; j < nY; ++j) {
             hist.SetBinContent(i+1, j+1, mat[i][j]);
-
-            std::cout << mat[i][j] << std::endl;
         }
     }
     return hist;

@@ -20,8 +20,9 @@ using NFT = NtupleFileType;
 void singlebin_stack_plots() {
 
   auto* syst_ptr = new MCC9SystematicsCalculator(
+  
     // Retrained BDTs
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withdata.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withdata.root",
     // Fake Data
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_NuWroFakeData_nueOnly_withPPFX.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singleBin_NuWroFakeData_NuWroGenieUncertainty.root", 
@@ -32,7 +33,7 @@ void singlebin_stack_plots() {
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_withoutData.root",
     // no data
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_noData_withNuWroUncertainty.root",
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_noData_withNuWroUncertainty.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_noData_withNuWroUncertainty.root",
     // Data
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_singlebin_withData.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_rhc_singlebin_withData.root", 

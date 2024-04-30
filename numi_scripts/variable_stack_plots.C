@@ -35,13 +35,52 @@ void variable_stack_plots() {
 
   auto* syst_ptr = new MCC9SystematicsCalculator(
     
+    // Alternative Flux
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_original_flux.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_new_flux.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_new_flux_withData.root",
+
+
     // Full
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full_noProton.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_extraLooseProtonSideband_noPionAngle.root",
+    
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData.root",
+    
+
+
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_runDependentDetVars.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_runDependentAltCV.root",
+    
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_fluggUncertainty.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_newDetVars.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withoutData.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData.root",  // all slices
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_full_withNuWroGenie.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData.root",
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData_FluggUncertainty.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData_FluggUncertainty.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData_FluggUncertainty_alternate.root",
+
+    // Sideband Test
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_total_looseProton.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_electron_angle_looseProtonTest.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_looseProtonSideband.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_strictProtonSideband.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_pi0Sideband.root",
+
+    // AltFlux Test
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_standardFlux_test.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_altFlux_test.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_altFlux_asFakeData.root",
+
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData.root",
+    
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData_sideband_full.root",
+
 
     "../systcalc.conf" );
   auto& syst = *syst_ptr;
@@ -54,7 +93,6 @@ void variable_stack_plots() {
   TH2D* category_hist = syst.cv_universe().hist_categ_.get();
 
   // Total MC+EXT prediction in reco bin space. Start by getting EXT.
-
   TH1D* reco_mc_plus_ext_hist = dynamic_cast< TH1D* >(
     reco_ext_hist->Clone("reco_mc_plus_ext_hist") );
   reco_mc_plus_ext_hist->SetDirectory( nullptr );
@@ -67,10 +105,8 @@ void variable_stack_plots() {
   auto* matrix_map_ptr = syst.get_covariances().release();
   auto& matrix_map = *matrix_map_ptr;
 
-  //auto* sb_ptr = new SliceBinning( "../electron_energy_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../electron_angle_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../pion_angle_slice_config.txt" );
   auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_electron_angle_slice_config.txt" );
   auto& sb = *sb_ptr;
 
   const auto& slice = sb.slices_.at( 0 ); // only considering single slice at a time
@@ -180,8 +216,9 @@ void variable_stack_plots() {
   if (normaliseByBinWidth) scale_by_bin_width(slice_mc_plus_ext);
 
   double ymax = std::max( slice_bnb->hist_->GetMaximum(),
-    slice_mc_plus_ext->hist_->GetMaximum() ) * 1.4;
+    slice_mc_plus_ext->hist_->GetMaximum() ) * 1.8;
   slice_bnb->hist_->GetYaxis()->SetRangeUser( 0., ymax );
+  //slice_bnb->hist_->GetYaxis()->SetRangeUser( 0., 20 );
   slice_bnb->hist_->SetTitle("");
   
   slice_bnb->hist_->GetXaxis()->SetLabelOffset(999); // Hide X-axis labels
@@ -213,17 +250,20 @@ void variable_stack_plots() {
   char labelText3[100];
   char labelText4[100];
   char labelText5[100];
-  sprintf(labelText1, "FHC + RHC");
-  sprintf(labelText2, "1.8848e+21 POT");
+  //sprintf(labelText1, "FHC + RHC");
+  sprintf(labelText1, "Run 3 RHC");
+  //sprintf(labelText2, "1.8848e+21 POT");
   //sprintf(labelText2, "Flugg Fake Data");
+  //sprintf(labelText2, "Genie Fake Data");
+  sprintf(labelText2, "New Flux");
   sprintf(labelText3, "#chi^{2} = %.2f / %d Bins", chi2_result.chi2_, chi2_result.num_bins_);
   sprintf(labelText4, "p-value = %.2f", chi2_result.p_value_);
   sprintf(labelText5, "%.1f #sigma", TMath::Sqrt( TMath::ChisquareQuantile( 1 - chi2_result.p_value_, 1 ) ));
   label.SetTextSize(0.04);
   label.DrawLatex(0.65, 0.80, labelText1);
   label.DrawLatex(0.65, 0.75, labelText2);
-  label.DrawLatex(0.65, 0.70, labelText3);
-  label.DrawLatex(0.65, 0.65, labelText4);
+  //label.DrawLatex(0.65, 0.70, labelText3);
+  //label.DrawLatex(0.65, 0.65, labelText4);
   //label.DrawLatex(0.65, 0.60, labelText5);
 
   //label.DrawLatex(0.2, 0.80, labelText1);
@@ -295,9 +335,8 @@ void variable_stack_plots() {
   // in this vector.
   const std::vector< std::string > cov_mat_keys = { "total",
     "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
-    "MCstats", "EXTstats", "NuWroGenie", "Flugg"
+    "MCstats", "EXTstats", "flux_Flugg", "BNBstats"
   };
-  
   // show detvars
   /*
   const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
@@ -305,13 +344,14 @@ void variable_stack_plots() {
     "detVarWMX", "detVarWMYZ", "detVarNumu" 
   };
   */
-      
+  /*    
   // show beamline uncertainties
-  //const std::vector< std::string > cov_mat_keys = {"total", "flux_beamline",
-  //"flux_Horn_2kA", "flux_Horn1_x_3mm", "flux_Horn1_y_3mm",
-  //"flux_Beam_spot_1_1mm", "flux_Beam_spot_1_5mm", "flux_Horn2_x_3mm", "flux_Horn2_y_3mm",
-  //"flux_Horns_0mm_water", "flux_Horns_2mm_water", "flux_Beam_shift_x_1mm", 
-  //"flux_Beam_shift_y_1mm", "flux_Target_z_7mm" }; 
+  const std::vector< std::string > cov_mat_keys = {"total", "flux_beamline",
+  "flux_Horn_2kA", "flux_Horn1_x_3mm", "flux_Horn1_y_3mm",
+  "flux_Beam_spot_1_1mm", "flux_Beam_spot_1_5mm", "flux_Horn2_x_3mm", "flux_Horn2_y_3mm",
+  "flux_Horns_0mm_water", "flux_Horns_2mm_water", "flux_Beam_shift_x_1mm", 
+  "flux_Beam_shift_y_1mm", "flux_Target_z_7mm" }; 
+  */
 
   // Loop over the various systematic uncertainties
   int color = 0;
@@ -349,12 +389,21 @@ void variable_stack_plots() {
 
     frac_uncertainty_hists[ key ] = slice_for_syst->hist_.get();
 
+    std::cout << key << std::endl;
+
     if ( color <= 9 ) ++color;
     if ( color == 5 ) ++color;
     if ( color >= 10 ) color += 10;
 
     slice_for_syst->hist_->SetLineColor( color );
     slice_for_syst->hist_->SetLineWidth( 4 );
+
+    if (key == "BNBstats") {
+      slice_for_syst->hist_->SetLineStyle( 9 );
+      slice_for_syst->hist_->SetLineWidth( 5 );
+      slice_for_syst->hist_->SetLineColor( kBlack );
+    }
+    if (key == "NuWroGenie") slice_for_syst->hist_->SetLineColor( kOrange );
   }
 
   TCanvas* c2 = new TCanvas;
@@ -386,12 +435,14 @@ void variable_stack_plots() {
     if ( name == "total" ) continue;
 
     // refine labels
-    std::string name_alt = ""; 
+    std::string name_alt = "";
+    if ( name == "BNBstats") name_alt = "NuMI Stat"; 
     if ( name == "EXTstats") name_alt = "EXT Stat";
     if ( name == "MCstats") name_alt = "MC Stat";
     if ( name == "detVar_total") name_alt = "DetVar Total";
     if ( name == "flux") name_alt = "Flux Hadronic";
     if ( name == "flux_beamline") name_alt = "Flux Beamline";
+    if ( name == "flux_Flugg") name_alt = "Flux Flugg";
     if ( name == "numTargets") name_alt = "Num Targets";
     if ( name == "xsec_total") name_alt = "X-Sec Total";
     if ( name == "reint") name_alt = "Reinteractions";

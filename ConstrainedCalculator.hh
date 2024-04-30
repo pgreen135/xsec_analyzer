@@ -29,6 +29,9 @@ class ConstrainedCalculator : public SystematicsCalculator {
     virtual double evaluate_observable( const Universe& univ, int cm_bin,
       int flux_universe_index = -1 ) const override;
 
+    virtual double evaluate_observable( const Universe& univ, int reco_bin,
+      std::string event_category, int flux_universe_index = -1 ) const override;
+
     virtual double evaluate_mc_stat_covariance( const Universe& univ,
       int cm_bin_a, int cm_bin_b ) const override;
 
@@ -43,7 +46,7 @@ class ConstrainedCalculator : public SystematicsCalculator {
     // Apply a sideband constraint before subtracting the EXT+MC background.
     // NOTE: this function assumes that the ordinary reco bins are all listed
     // before any sideband reco bins
-    virtual MeasuredEvents get_measured_events() const override;
+    virtual MeasuredEvents get_measured_events(std::string type = "default") const override;
 
   protected:
 
@@ -102,6 +105,8 @@ double ConstrainedCalculator::evaluate_observable( const Universe& univ,
   double reco_bin_events = 0.;
 
   bool use_detVar_CV = this->is_detvar_universe( univ );
+  bool use_altCV_CV = this->is_altcv_universe( univ );
+  bool use_flugg_CV = this->is_flugg_universe( univ );
 
   // Get access to the CV universe. We need it regardless of the input universe
   // so that we can use it in the denominator of the smearceptance matrix
@@ -112,6 +117,14 @@ double ConstrainedCalculator::evaluate_observable( const Universe& univ,
   const Universe* cv_univ = nullptr;
   if ( use_detVar_CV ) {
     cv_univ = detvar_universes_.at( NFT::kDetVarMCCV ).get();
+  }
+  else if ( use_altCV_CV ) {
+    // use altCVMC CV universe for altCV MC
+    cv_univ = alt_cv_universes_.at( NFT::kAltCVMCGenieCV ).get();
+  }
+  else if ( use_flugg_CV ) {
+    // use fluggMC CV universe for flugg MC
+    cv_univ = flugg_universes_.at( NFT::kFluggMCCV ).get();
   }
   else {
     cv_univ = &this->cv_universe();
@@ -132,6 +145,134 @@ double ConstrainedCalculator::evaluate_observable( const Universe& univ,
   // with either signal or background
   for ( size_t tb = 0u; tb < num_true_bins; ++tb ) {
     const auto& tbin = true_bins_.at( tb );
+
+    if ( tbin.type_ == kSignalTrueBin ) {
+
+      // Ignore signal true bins outside of the same block as the current
+      // reco bin. This avoids issues with double-counting.
+      int true_block_index = tbin.block_index_;
+      if ( reco_block_index != true_block_index ) continue;
+
+      // Get the CV event count for the current true bin
+      double denom_CV = cv_univ->hist_true_->GetBinContent( tb + 1 );
+
+      // For the systematic variation universes, we want to assess
+      // uncertainties on the signal only through the smearceptance
+      // matrix. We therefore compute the smearceptance matrix element
+      // here and then apply it to the CV expected event count in
+      // each true bin.
+      // NOTE: ROOT histogram bin numbers are one-based (bin zero is always
+      // the underflow bin). Our bin indices therefore need to be offset by
+      // +1 in all cases here.
+      double numer = univ.hist_2d_->GetBinContent( tb + 1, reco_bin + 1 );
+      double denom = univ.hist_true_->GetBinContent( tb + 1 );
+
+      // I plan to extract the flux-averaged cross sections in terms of the
+      // *nominal* flux model (as opposed to the real flux). I therefore
+      // vary the numerator of the smearceptance matrix for these while
+      // keeping the denominator equal to the CV expectation under the
+      // nominal flux model. This is the same strategy as is used in the
+      // Wire-Cell CC inclusive analysis.
+      if ( flux_universe_index >= 0 ) {
+        denom = denom_CV;
+      }
+
+      // If the denominator is nonzero actually calculate the fraction.
+      // Otherwise, just leave it zeroed out.
+      // TODO: revisit this, think about MC statistical uncertainties
+      // on the empty bins
+      double smearcept = 0.;
+      if ( denom > 0. ) smearcept = numer / denom;
+
+      // Compute the expected signal events in this universe
+      // by multiplying the varied smearceptance matrix element
+      // by the unaltered CV prediction in the current true bin.
+      double expected_signal = smearcept * denom_CV;
+
+      // For the ordinary background reco bins, don't include any signal
+      // contribution
+      if ( bin_type == kOrdinaryRecoBinBkgd ) {
+        expected_signal = 0.;
+      }
+      //// TODO: REVISIT THIS
+      //// For the sideband bins, go ahead and vary the signal prediction
+      //// just like the background one
+      //else if ( bin_type == kSidebandRecoBinAll ) {
+      //  expected_signal = numer;
+      //}
+
+      // Compute the expected signal events in the current reco bin
+      // with the varied smearceptance matrix (and, for flux universes,
+      // the varied integrated flux)
+      reco_bin_events += expected_signal;
+    }
+    else if ( tbin.type_ == kBackgroundTrueBin ) {
+      // For background events, we can use the same procedure regardless
+      // of whether we're in the CV universe or not
+      double background = univ.hist_2d_->GetBinContent( tb + 1, reco_bin + 1 );
+      reco_bin_events += background;
+    }
+  } // true bins
+
+  return reco_bin_events;
+}
+
+double ConstrainedCalculator::evaluate_observable( const Universe& univ,
+  int cm_bin, std::string event_category, int flux_universe_index ) const
+{
+  // For the ConstrainedCalculator class, the observable of interest is the
+  // total number of events (either signal + background or background only) in
+  // the current bin in reco space
+  double reco_bin_events = 0.;
+
+  bool use_detVar_CV = this->is_detvar_universe( univ );
+  bool use_altCV_CV = this->is_altcv_universe( univ );
+  bool use_flugg_CV = this->is_flugg_universe( univ );
+
+  // Get access to the CV universe. We need it regardless of the input universe
+  // so that we can use it in the denominator of the smearceptance matrix
+  // element. Note that we should use the detVarCV universe as the CV when the
+  // input universe corresponds to a detector variation (or is the detVarCV
+  // universe itself). Based on the check above, we assign a pointer to
+  // either the regular or detVar CV here as appropriate.
+  const Universe* cv_univ = nullptr;
+  if ( use_detVar_CV ) {
+    cv_univ = detvar_universes_.at( NFT::kDetVarMCCV ).get();
+  }
+  else if ( use_altCV_CV ) {
+    // use altCVMC CV universe for altCV MC
+    cv_univ = alt_cv_universes_.at( NFT::kAltCVMCGenieCV ).get();
+  }
+  else if ( use_flugg_CV ) {
+    // use fluggMC CV universe for flugg MC
+    cv_univ = flugg_universes_.at( NFT::kFluggMCCV ).get();
+  }
+  else {
+    cv_univ = &this->cv_universe();
+  }
+
+  ConstrainedCalculatorBinType bin_type;
+  int reco_bin = this->get_reco_bin_and_type( cm_bin, bin_type );
+
+  // Look up the block index for the current reco bin. We will use this
+  // to avoid double-counting when summing over true bins below.
+  const auto& rbin = reco_bins_.at( reco_bin );
+  int reco_block_index = rbin.block_index_;
+
+  size_t num_true_bins = true_bins_.size();
+
+  // We need to sum the contributions of the various true bins,
+  // so loop over them while checking whether each one is associated
+  // with either signal or background
+
+  // Select only true bin of interest based on event category
+  // Construct string to check against
+  std::string category_string = "category == " + event_category;
+
+  for ( size_t tb = 0u; tb < num_true_bins; ++tb ) {
+    const auto& tbin = true_bins_.at( tb );
+
+    if (tbin.signal_cuts_ != category_string) continue;
 
     if ( tbin.type_ == kSignalTrueBin ) {
 
@@ -302,7 +443,7 @@ int ConstrainedCalculator::get_reco_bin_and_type( int cm_bin,
   return bin;
 }
 
-MeasuredEvents ConstrainedCalculator::get_measured_events() const
+MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) const
 {
   const int two_times_ord_bins = 2*num_ordinary_reco_bins_;
   const auto& cv_univ = this->cv_universe();
@@ -383,10 +524,15 @@ MeasuredEvents ConstrainedCalculator::get_measured_events() const
   TMatrixD s_o_cov_mat = tot_cov_mat->GetSub( first_sb_cm_idx, last_sb_cm_idx,
     first_ob_cm_idx, last_ob_cm_idx );
 
+  // plot the matrices
+  //TCanvas* ordcovcanvas = new TCanvas;
+  //ordinary_cov_mat.Draw("COLZ");
+  //sideband_cov_mat.Draw("COLZ");
+
   // Invert the sideband covariance matrix in preparation for applying
   // the sideband constraint
   auto inverse_sideband_cov_mat = invert_matrix( sideband_cov_mat );
-
+ 
   // We're ready. Apply the sideband constraint to the prediction vector first.
   TMatrixD sideband_data_mc_diff( sideband_data,
     TMatrixD::EMatrixCreatorsOp2::kMinus, sideband_mc_plus_ext );
@@ -409,10 +555,22 @@ MeasuredEvents ConstrainedCalculator::get_measured_events() const
 
   // Pull out the block of the constrained covariance matrix that describes
   // the uncertainty on signal+background only
+  /*
   auto* sig_plus_bkgd_cov_mat = new TMatrixD(
     constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1,
       0, num_ordinary_reco_bins_ - 1 )
   );
+  */
+  // NEW
+  // Constrained part
+  auto* constr_bkgd_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
+  // Unconstrained part
+  auto* unconstr_sig_plus_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ) );
+  auto* unconstr_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
+  auto* unconstr_sig_cov_mat = new TMatrixD( *unconstr_sig_plus_bkgd_cov_mat, TMatrixD::EMatrixCreatorsOp2::kMinus, *unconstr_bkgd_cov_mat);
+  // Final
+  auto* sig_plus_bkgd_cov_mat = new TMatrixD( *unconstr_sig_cov_mat, TMatrixD::EMatrixCreatorsOp2::kPlus, *constr_bkgd_cov_mat);
+
 
   // Get the constrained background prediction column vector
   auto* reco_bkgd_vec = new TMatrixD(
@@ -421,16 +579,50 @@ MeasuredEvents ConstrainedCalculator::get_measured_events() const
   );
 
   // Get the constrained signal+background prediction column vector
+  /*
   TMatrixD* mc_plus_ext_vec = new TMatrixD(
     constr_cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 )
   );
+  */
+  // NEW
+  TMatrixD* unconstr_mc_plus_ext_vec = new TMatrixD( cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
+  TMatrixD* unconstr_bkgd_vec = new TMatrixD( cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
+  auto* unconstr_sig_vec = new TMatrixD( *unconstr_mc_plus_ext_vec, TMatrixD::EMatrixCreatorsOp2::kMinus, *unconstr_bkgd_vec );
+  auto* mc_plus_ext_vec = new TMatrixD( *unconstr_sig_vec, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_vec );
 
   // Get the ordinary reco bin data column vector after subtracting the
   // constrained background prediction
   auto* reco_data_minus_bkgd = new TMatrixD( ordinary_data,
     TMatrixD::EMatrixCreatorsOp2::kMinus, *reco_bkgd_vec );
 
-  MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
-    mc_plus_ext_vec, sig_plus_bkgd_cov_mat );
-  return result;
+  //MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+  //  mc_plus_ext_vec, sig_plus_bkgd_cov_mat );
+
+  if (type == "default") {
+    MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+      mc_plus_ext_vec, sig_plus_bkgd_cov_mat );
+
+    return result;
+  }
+  if (type == "unconstr sig+bkgd") {
+    MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+      unconstr_mc_plus_ext_vec, unconstr_sig_plus_bkgd_cov_mat );
+
+    return result;
+  }
+  else if (type == "constr bkgd") {
+    MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+      reco_bkgd_vec, constr_bkgd_cov_mat );
+
+    return result;
+  }
+  else if (type == "unconstr bkgd") {
+    MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+      unconstr_bkgd_vec, unconstr_bkgd_cov_mat );
+
+    return result;
+  }
+  else {
+    throw std::runtime_error( "ConstrainedCalculator::get_measured_events: Invalid type." );
+  }
 }

@@ -25,7 +25,7 @@ class SliceHistogram {
     static SliceHistogram* make_slice_histogram( TH1D& reco_bin_histogram,
       const Slice& slice, const CovMatrix* input_cov_mat = nullptr );
 
-    static SliceHistogram* make_slice_histogram( TMatrixD& reco_bin_counts,
+    static SliceHistogram* make_slice_histogram( const TMatrixD& reco_bin_counts,
       const Slice& slice, const TMatrixD* input_cov_mat );
 
     // TODO: revisit this implementation
@@ -172,7 +172,7 @@ SliceHistogram* SliceHistogram::make_slice_histogram( TH1D& reco_bin_histogram,
 }
 
 SliceHistogram* SliceHistogram::make_slice_histogram(
-  TMatrixD& reco_bin_counts, const Slice& slice,
+  const TMatrixD& reco_bin_counts, const Slice& slice,
   const TMatrixD* input_cov_mat )
 {
   // TODO: reduce code duplication between this function and the overloaded
@@ -180,6 +180,8 @@ SliceHistogram* SliceHistogram::make_slice_histogram(
 
   // Check that the reco_bin_counts are given as a column vector
   if ( reco_bin_counts.GetNcols() != 1 ) {
+    std::cout << reco_bin_counts.GetNcols() << std::endl;
+    std::cout << reco_bin_counts.GetNrows() << std::endl;
     throw std::runtime_error( "Invalid dimension for bin counts passed"
       "to SliceHistogram::make_slice_histogram()" );
   }
@@ -386,8 +388,9 @@ SliceHistogram::Chi2Result SliceHistogram::get_chi2(
     double other_counts = other.hist_->GetBinContent( a + 1 );
 
     //if (a == 4) {
-    //  counts=other_counts; //fudge for testing
+    //  counts = other_counts; // fudge for testing
     //}
+    
     diff_vec( 0, a ) = counts - other_counts;
   }
 

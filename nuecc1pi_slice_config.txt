@@ -1,10 +1,9 @@
-5
+4
 "Electron Energy" "GeV" "Electron Energy" "GeV"
 "cos(#beta_{e})" "" "cos(#beta_{e})" ""
 "cos(#beta_{#pi})" "" "cos(#beta_{#pi}" ""
-"Proton Multiplicity" "" "Proton Multiplicity" ""
 "" "" "" ""
-5
+4
 "Events / GeV"
 1 0 6 0.03 0.4 0.7 1.05 1.65 2.55
 0
@@ -33,13 +32,7 @@
 14 1 4
 15 1 5
 "Events"
-1 3 3 0 1 2
-0
-2
-16 1 1
-17 1 2
-"Events"
-1 4 2 0 1
+1 3 2 0 1
 0
 1
-18 1 1
+16 1 1

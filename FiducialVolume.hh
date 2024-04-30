@@ -74,9 +74,9 @@ inline double integrated_numu_flux_in_FV( double pot ) {
 
   // combined
   // genie fake data
-  double flux = 1.844847e-11 * 12.22453e21 + 1.71474e-11 * 10.84891e21;
+  //double flux = 1.844847e-11 * 12.22453e21 + 1.71474e-11 * 10.84891e21;
   // nuwro fake data
-  //double flux = 1.844847e-11 * 17.09056e21;
+  double flux = 1.844847e-11 * 17.09056e21 + 1.71474e-11 * 8.508462e21;
 
   return flux;
 }

@@ -15,6 +15,7 @@
 #include "FiducialVolume.hh"
 #include "MatrixUtils.hh"
 #include "MCC9SystematicsCalculator.hh"
+#include "ConstrainedCalculator.hh"
 #include "NormShapeCovMatrix.hh"
 #include "PGFPlotsDumpUtils.hh"
 #include "SliceBinning.hh"
@@ -326,8 +327,8 @@ CrossSectionExtractor::CrossSectionExtractor(
   }
 
   // Initialize the owned SystematicsCalculator
-  auto* temp_syst = new MCC9SystematicsCalculator( univ_file_name,
-    syst_config_file_name );
+  //auto* temp_syst = new MCC9SystematicsCalculator( univ_file_name, syst_config_file_name );
+  auto* temp_syst = new ConstrainedCalculator( univ_file_name, syst_config_file_name );
   syst_.reset( temp_syst );
 
   // With the SystematicsCalculator in place (including its owned Universe
@@ -340,8 +341,10 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
   // Evaluate the total and partial covariance matrices in reco space
   auto matrix_map = syst_->get_covariances();
 
-  auto* mcc9 = dynamic_cast< MCC9SystematicsCalculator* >( syst_.get() );
+  //auto* mcc9 = dynamic_cast< MCC9SystematicsCalculator* >( syst_.get() );
+  auto* mcc9 = dynamic_cast< ConstrainedCalculator* >( syst_.get() );
 
+  /*
   if ( INCLUDE_BKGD_ONLY_ERRORS ) {
 
     // Add in covariances calculated by varying only the background MC
@@ -375,6 +378,7 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
     // Restore the default behavior of the SystematicsCalculator
     mcc9->set_syst_mode( MCC9SystMode::ForXSec );
   }
+  */
 
   // Perform background subtraction and unfolding to get a measurement of event
   // counts in (regularized) true space
@@ -399,9 +403,9 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
 
 
     // Plot the smearing matrix
-    const Int_t n = 5;
-    Double_t bins[n+1] = {0, 6, 11, 16, 18, 19};
-    const Char_t *labels[n] = {"E_{e}", "cos(#beta_{e})", "cos(#beta_{#pi})", "N_{p}", "Total"};
+    const Int_t n = 4;
+    Double_t bins[n+1] = {0, 6, 11, 16, 17};
+    const Char_t *labels[n] = {"E_{e}", "cos(#beta_{e})", "cos(#beta_{#pi})", "Total"};
 
     // Convert TMatrixD to TH2D using the TMatrixDToTH2D function
     TH2D h_A_C = util::TMatrixDToTH2D(A_C, "h_A_C", "Additional smearing matrix", 0, A_C.GetNcols(), 0, A_C.GetNrows());
@@ -411,7 +415,7 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
     TCanvas *c_ac = new TCanvas("c_ac","A_C Matrix",200,10,700,500);
     c_ac->SetRightMargin(0.15);
     h_A_C.SetStats(0); // Disable the statistics box
-    h_A_C.GetZaxis()->SetRangeUser(-2, 2); // Set the z range
+    h_A_C.GetZaxis()->SetRangeUser(-0.5, 1.5); // Set the z range
     h_A_C.Draw("colz");
     h_A_C.GetXaxis()->SetTitle("Bin Index");
     h_A_C.GetYaxis()->SetTitle("Bin Index");
