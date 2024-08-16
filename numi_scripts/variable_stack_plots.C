@@ -14,6 +14,7 @@
 #include "../PlotUtils.hh"
 #include "../SliceBinning.hh"
 #include "../SliceHistogram.hh"
+#include "../utils.hh"
 
 using NFT = NtupleFileType;
 
@@ -31,14 +32,17 @@ void scale_by_bin_width(SliceHistogram* pSlice)
 
 void variable_stack_plots() {
 
-  bool normaliseByBinWidth = true;
+  bool normaliseByBinWidth = false;
 
   auto* syst_ptr = new MCC9SystematicsCalculator(
     
     // Alternative Flux
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_original_flux.root",
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_new_flux.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_new_flux.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_reweighted_flux.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_new_flux_withData.root",
+
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_test.root",
 
 
     // Full
@@ -75,11 +79,45 @@ void variable_stack_plots() {
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_altFlux_test.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_altFlux_asFakeData.root",
 
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full.root",
+
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_full_withData_sideband_Katrina.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run1_withData_sideband_Katrina.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run2_withData_sideband_Katrina.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run3_withData_sideband_Katrina.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run4_withData_sideband_Katrina.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_nuecc1pi_run5_withData_sideband_Katrina.root",
+
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full_noPi0.root",
     
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData_sideband_full.root",
+
+
+    // Reweighted Flux [Some need re-running]
+    // Total
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData.root", [OLD]
+    // FHC
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_fhc_withData.root",
+    // RHC
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData.root",
+
+    // Sideband
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withDelta2NpiFix.root",
+
+    // NuWro Fake Data
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData.root", [OLD]
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroUnisim.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
+
+    // Genie Fake Data
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_GenieFakeData.root", [OLD]
+
+    // Reweight fake data (run 3 only)
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_ReweightFakeData.root", [OLD]
 
 
     "../systcalc.conf" );
@@ -106,10 +144,96 @@ void variable_stack_plots() {
   auto& matrix_map = *matrix_map_ptr;
 
   auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_electron_angle_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../pionangle_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_1_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_2_slice_config.txt" );
+  
+
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config_oldflux.txt" );
+ 
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_2_Katrina_slice_config.txt" );
+
   auto& sb = *sb_ptr;
 
-  const auto& slice = sb.slices_.at( 0 ); // only considering single slice at a time
+  unsigned int sl_idx = 4;
+  const auto& slice = sb.slices_.at( sl_idx ); // only considering single slice at a time
+
+  // -- confusion matrix -- 
+  const auto cv_hist_2d = syst.get_cv_hist_2d();
+
+  size_t start = std::numeric_limits<size_t>::max();
+  size_t stop = 0;
+  for (const auto& entry : slice.bin_map_) {
+    const auto& set = entry.second;
+    if (set.size() != 1) {
+        throw std::runtime_error("Error: set in bin_map_ has more or less than 1 entry");
+    }
+    start = std::min(start, *set.begin());
+    stop = std::max(stop, *set.rbegin());
+  }
+
+  TMatrixD cv_hist_2d_slice(stop - start + 1, stop - start + 1);
+  for (int i = start; i <= stop; i++) {
+      for (int j = start; j <= stop; j++) {
+          cv_hist_2d_slice(i - start, j - start) = cv_hist_2d->GetBinContent(i+1, j+1);
+      }
+  }
+
+  const auto cv_confusion_mat = util::CountsToConfusionMatrix(cv_hist_2d_slice, "row");  
+
+  // Create a TH2D histogram
+  const int num_bins = slice.hist_->GetNbinsX();
+  TH2D *cv_confusion_hist = new TH2D(("cv_confusion slice "+std::to_string(sl_idx)).c_str(),"",
+                          num_bins, 0, num_bins,
+                          num_bins, 0, num_bins);
+
+  // Fill histogram with values from TMatrixD
+  for (int i = 0; i < cv_confusion_mat.GetNrows(); i++) {
+      for (int j = 0; j < cv_confusion_mat.GetNcols(); j++) {
+          cv_confusion_hist->SetBinContent(i+1, j+1, cv_confusion_mat(i, j));
+      }
+  }
+
+  TCanvas* c_conf_1 = new TCanvas(("c_conf_1 slice "+std::to_string(sl_idx)).c_str(), "c confusion matrix", 800, 600);
+  cv_confusion_hist->SetStats(false);
+  cv_confusion_hist->SetMinimum(0);
+  cv_confusion_hist->SetMaximum(1.0);
+  // gStyle->SetPalette(util::CreateWhiteToBlueColorPalette(20));
+  gStyle->SetPalette();
+
+  // Set x and y axis labels to bin numbers
+  for (int i = 1; i <= cv_confusion_hist->GetNbinsX(); i++) {
+      cv_confusion_hist->GetXaxis()->SetBinLabel(i, Form("%d", i));
+  }
+  for (int i = 1; i <= cv_confusion_hist->GetNbinsY(); i++) {
+      cv_confusion_hist->GetYaxis()->SetBinLabel(i, Form("%d", i));
+  }
+  // Increase the font size of the axis labels
+  cv_confusion_hist->GetXaxis()->SetLabelSize(0.05);
+  cv_confusion_hist->GetYaxis()->SetLabelSize(0.05);
+
+  cv_confusion_hist->GetXaxis()->SetTitle("Bin Index");
+  cv_confusion_hist->GetYaxis()->SetTitle("Bin Index");
+  cv_confusion_hist->SetTitle("Confusion Matrix: Opening Angle");
+
+  cv_confusion_hist->Draw("COLZ");
+
+  // Fill histogram with slice data
+  for (int i = 0; i < num_bins; i++) {
+      for (int j = 0; j < num_bins; j++) {
+          double bin_content = cv_hist_2d_slice(i, j);
+          TLatex* latex = new TLatex(cv_confusion_hist->GetXaxis()->GetBinCenter(i+1), cv_confusion_hist->GetYaxis()->GetBinCenter(j+1), Form("#splitline{%.1f%%}{(%.1f)}", 100*cv_confusion_hist->GetBinContent(i+1, j+1), bin_content));
+          latex->SetTextFont(42);
+          latex->SetTextSize(0.02);
+          latex->SetTextAlign(22);
+          latex->Draw();
+      }
+  }
+
+  c_conf_1->SaveAs(("cv_confusion_matrix_slice_" + std::string(sl_idx < 10 ? "0" : "") + std::to_string(sl_idx) + ".pdf").c_str());
+
+  // -- confusion matrix -- 
+
 
   // We now have all of the reco bin space histograms that we need as input.
   // Use them to make new histograms in slice space.
@@ -122,6 +246,7 @@ void variable_stack_plots() {
   SliceHistogram* slice_mc_plus_ext = SliceHistogram::make_slice_histogram(
     *reco_mc_plus_ext_hist, slice, &matrix_map.at("total") );
 
+  
   auto chi2_result = slice_bnb->get_chi2( *slice_mc_plus_ext );
   std::cout << "\u03C7\u00b2 = "
     << chi2_result.chi2_ << '/' << chi2_result.num_bins_ << " bins,"
@@ -250,27 +375,36 @@ void variable_stack_plots() {
   char labelText3[100];
   char labelText4[100];
   char labelText5[100];
-  //sprintf(labelText1, "FHC + RHC");
-  sprintf(labelText1, "Run 3 RHC");
-  //sprintf(labelText2, "1.8848e+21 POT");
-  //sprintf(labelText2, "Flugg Fake Data");
+  sprintf(labelText1, "FHC + RHC");
+  //sprintf(labelText2, "7.77e+20 POT"); // FHC
+  //sprintf(labelText2, "11.08e+20 POT"); // RHC
+  sprintf(labelText2, "1.885e+21 POT"); // FHC + RHC
+  
+  //sprintf(labelText1, "Run 5 FHC");
+  //sprintf(labelText2, "2.7973e+20 POT");
+  //sprintf(labelText2, "3.859e+20 POT");
+  //sprintf(labelText2, "5.003e+20 POT");
+  //sprintf(labelText2, "4.958e+20 POT");
+  //sprintf(labelText2, "2.231e+20 POT");
+  //sprintf(labelText2, "1.3845e+21 POT");
+  //sprintf(labelText2, "NuWro Fake Data");
   //sprintf(labelText2, "Genie Fake Data");
-  sprintf(labelText2, "New Flux");
+  //sprintf(labelText2, "New Flux");
   sprintf(labelText3, "#chi^{2} = %.2f / %d Bins", chi2_result.chi2_, chi2_result.num_bins_);
   sprintf(labelText4, "p-value = %.2f", chi2_result.p_value_);
   sprintf(labelText5, "%.1f #sigma", TMath::Sqrt( TMath::ChisquareQuantile( 1 - chi2_result.p_value_, 1 ) ));
   label.SetTextSize(0.04);
-  label.DrawLatex(0.65, 0.80, labelText1);
-  label.DrawLatex(0.65, 0.75, labelText2);
+  //label.DrawLatex(0.65, 0.80, labelText1);
+  //label.DrawLatex(0.65, 0.75, labelText2);
   //label.DrawLatex(0.65, 0.70, labelText3);
   //label.DrawLatex(0.65, 0.65, labelText4);
   //label.DrawLatex(0.65, 0.60, labelText5);
 
-  //label.DrawLatex(0.2, 0.80, labelText1);
-  //label.DrawLatex(0.2, 0.75, labelText2);
-  //label.DrawLatex(0.2, 0.70, labelText3);
-  //label.DrawLatex(0.2, 0.65, labelText4);
-  //label.DrawLatex(0.2, 0.60, labelText5);
+  label.DrawLatex(0.175, 0.80, labelText1);
+  label.DrawLatex(0.175, 0.75, labelText2);
+  label.DrawLatex(0.175, 0.70, labelText3);
+  label.DrawLatex(0.175, 0.65, labelText4);
+  //label.DrawLatex(0.175, 0.60, labelText5);
 
   // draw legend
   leg->Draw("Same");
@@ -333,10 +467,12 @@ void variable_stack_plots() {
   // in the ROOT plot. All configured fractional uncertainties will be
   // included in the output pgfplots file regardless of whether they appear
   // in this vector.
+  /*
   const std::vector< std::string > cov_mat_keys = { "total",
     "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
-    "MCstats", "EXTstats", "flux_Flugg", "BNBstats"
+    "MCstats", "EXTstats", "BNBstats"
   };
+  */
   // show detvars
   /*
   const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
@@ -352,6 +488,10 @@ void variable_stack_plots() {
   "flux_Horns_0mm_water", "flux_Horns_2mm_water", "flux_Beam_shift_x_1mm", 
   "flux_Beam_shift_y_1mm", "flux_Target_z_7mm" }; 
   */
+  // show xsec uncertainties
+  
+  const std::vector< std::string > cov_mat_keys = {"total", "xsec_multi", "xsec_unisim", "xsec_Theta_Delta2Npi" };
+  
 
   // Loop over the various systematic uncertainties
   int color = 0;
@@ -359,6 +499,8 @@ void variable_stack_plots() {
 
     const auto& key = pair.first;
     const auto& cov_matrix = pair.second;
+
+    std::cout << key << std::endl;
 
     SliceHistogram* slice_for_syst = SliceHistogram::make_slice_histogram(
       *reco_mc_plus_ext_hist, slice, &cov_matrix );
@@ -417,7 +559,7 @@ void variable_stack_plots() {
   //total_frac_err_hist->GetMaximum() * 1.05 );
   total_frac_err_hist->SetLineColor( kBlack );
   total_frac_err_hist->SetLineWidth( 5 );
-  total_frac_err_hist->SetTitle("Electron Energy");
+  total_frac_err_hist->SetTitle("Electron Energy - Post Fix");
   total_frac_err_hist->GetYaxis()->SetTitle("Fractional Uncertainty");
   total_frac_err_hist->Draw( "hist" );
 
@@ -427,6 +569,8 @@ void variable_stack_plots() {
   string label_str = ss.str();
 
   lg2->AddEntry( total_frac_err_hist, label_str.c_str(), "l" );
+
+  std::cout << "HERE" << std::endl;
 
   for ( auto& pair : frac_uncertainty_hists ) {
     const auto& name = pair.first;

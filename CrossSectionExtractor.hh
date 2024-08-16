@@ -29,7 +29,10 @@ using WSVD_RMT = WienerSVDUnfolder::RegularizationMatrixType;
 using MCC9SystMode = MCC9SystematicsCalculator::SystMode;
 
 constexpr double BIG_DOUBLE = 1e300;
-constexpr bool USE_ADD_SMEAR = true;
+
+constexpr bool USE_ADD_SMEAR = true; // TESTING TRUE
+
+
 constexpr bool INCLUDE_BKGD_ONLY_ERRORS = false;
 constexpr bool INCLUDE_SIGRESP_ONLY_ERRORS = false;
 
@@ -403,9 +406,9 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
 
 
     // Plot the smearing matrix
-    const Int_t n = 4;
-    Double_t bins[n+1] = {0, 6, 11, 16, 17};
-    const Char_t *labels[n] = {"E_{e}", "cos(#beta_{e})", "cos(#beta_{#pi})", "Total"};
+    const Int_t n = 5;
+    Double_t bins[n+1] = {0, 5, 10, 15, 20, 21};
+    const Char_t *labels[n] = {"E_{e}", "cos(#beta_{e})", "cos(#beta_{#pi})", "cos(#theta_{e#pi})", "Total"};
 
     // Convert TMatrixD to TH2D using the TMatrixDToTH2D function
     TH2D h_A_C = util::TMatrixDToTH2D(A_C, "h_A_C", "Additional smearing matrix", 0, A_C.GetNcols(), 0, A_C.GetNrows());

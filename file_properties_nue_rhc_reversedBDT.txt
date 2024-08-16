@@ -3,44 +3,69 @@
 # file_name run file_type [triggers POT (for data only)]
 #
 # Beam-off data
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run1_rhc.root 1 extBNB 6425821 0
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run2_rhc.root 2 extBNB 20966716 0
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run3b_rhc.root 3 extBNB 32649090 0
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_off_pion_ntuples_run4_rhc.root 4 extBNB 17395695 0
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_off_pion_ntuples_run1_rhc.root 1 extBNB 6425821 0
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_off_pion_ntuples_run2_rhc.root 2 extBNB 20966716 0
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_off_pion_ntuples_run3b_rhc.root 3 extBNB 32649090 0
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_off_pion_ntuples_run4_rhc.root 4 extBNB 17395695 0
 #
 # Full beam-on data or fake data
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run1_rhc.root 1 onBNB 1458253  0.6053e20
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run2_rhc.root 2 onBNB 5422907  2.591e20
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run3b_rhc.root 3 onBNB 10349610  5.003e20
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_beam_on_pion_ntuples_run4_rhc.root 4 onBNB 6304167  2.883e20
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_on_pion_ntuples_run1_rhc.root 1 onBNB 1458253  0.6053e20
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_on_pion_ntuples_run2_rhc.root 2 onBNB 5422907  2.591e20
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_on_pion_ntuples_run3b_rhc.root 3 onBNB 10349610  5.003e20
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_beam_on_pion_ntuples_run4_rhc.root 4 onBNB 6304167  2.883e20
 #
 # Dirt MC samples
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run1_rhc_fakeweights.root 1 dirtMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run2b_rhc_fakeweights.root 2 dirtMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run3b_rhc_fakeweights.root 3 dirtMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_dirt_overlay_pion_ntuples_run4_rhc_fakeweights.root 4 dirtMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_dirt_overlay_pion_ntuples_run1_rhc_fakeweights.root 1 dirtMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_dirt_overlay_pion_ntuples_run2b_rhc_fakeweights.root 2 dirtMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_dirt_overlay_pion_ntuples_run3b_rhc_fakeweights.root 3 dirtMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_dirt_overlay_pion_ntuples_run4_rhc_fakeweights.root 4 dirtMC
 #
 # Intrinsic nue MC samples
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run1_rhc_test.root 1 nueMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run2_rhc_test.root 2 nueMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run3_rhc_test.root 3 nueMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_overlay_pion_ntuples_run4_rhc_test.root 4 nueMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run1_rhc_test.root 1 nueMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run2_rhc_test.root 2 nueMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run3_rhc_test_combined.root 3 nueMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run4_rhc_test.root 4 nueMC
 #
 # numu MC samples (standard nu overlay)
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run1_rhc.root 1 numuMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run2_rhc.root 2 numuMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run3_rhc.root 3 numuMC
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nu_overlay_pion_ntuples_run4_rhc.root 4 numuMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nu_overlay_pion_ntuples_run1_rhc.root 1 numuMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nu_overlay_pion_ntuples_run2_rhc.root 2 numuMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nu_overlay_pion_ntuples_run3_rhc_combined.root 3 numuMC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-reweightedPPFX_numi_nu_overlay_pion_ntuples_run4_rhc_combined.root 4 numuMC
 #
 # DetVar samples
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_CV_full.root 3 detVarCV
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_LYDown_test_slim.root 3 detVarLYdown
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_LYRayleigh_test_slim.root 3 detVarLYrayl
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_LYAttenuation_test_slim.root 3 detVarLYatten
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_SCE_test_slim.root 3 detVarSCE
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_Recombination_test_slim.root 3 detVarRecomb2
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_WireModX_test_slim.root 3 detVarWMX
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_WireModYZ_test_slim.root 3 detVarWMYZ
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_WireModThetaXZ_test_slim.root 3 detVarWMAngleXZ
-/Volumes/MyPassport/stvNTuples/rhc_reverseBDT/stv-numi_nue_detvars_pion_ntuples_rhc_merged_WireModThetaYZ_test_slim.root 3 detVarWMAngleYZ
+# RHC
+# Run 1 RHC
+# Run 2 RHC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_CV_full_split_reweightedPPFX.root 2 detVarCV
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_LYDown_slim_split_reweightedPPFX.root 2 detVarLYdown
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_LYRayleigh_slim_split_reweightedPPFX.root 2 detVarLYrayl
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_LYAttenuation_slim_split_reweightedPPFX.root 2 detVarLYatten
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_SCE_slim_split_reweightedPPFX.root 2 detVarSCE
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_Recombination_slim_split_reweightedPPFX.root 2 detVarRecomb2
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_WireModX_slim_split_reweightedPPFX.root 2 detVarWMX
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_WireModYZ_slim_split_reweightedPPFX.root 2 detVarWMYZ
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_WireModThetaXZ_slim_split_reweightedPPFX.root 2 detVarWMAngleXZ
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run2_rhc_WireModThetaYZ_slim_split_reweightedPPFX.root 2 detVarWMAngleYZ
+# Run 3 RHC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_CV_full_split_reweightedPPFX.root 3 detVarCV
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_LYDown_slim_split_reweightedPPFX.root 3 detVarLYdown
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_LYRayleigh_slim_split_reweightedPPFX.root 3 detVarLYrayl
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_LYAttenuation_slim_split_reweightedPPFX.root 3 detVarLYatten
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_SCE_slim_split_reweightedPPFX.root 3 detVarSCE
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_Recombination_slim_split_reweightedPPFX.root 3 detVarRecomb2
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_WireModX_slim_split_reweightedPPFX.root 3 detVarWMX
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_WireModYZ_slim_split_reweightedPPFX.root 3 detVarWMYZ
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_WireModThetaXZ_slim_split_reweightedPPFX.root 3 detVarWMAngleXZ
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run3_rhc_WireModThetaYZ_slim_split_reweightedPPFX.root 3 detVarWMAngleYZ
+# Run 4 RHC
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_CV_full_split_reweightedPPFX.root 4 detVarCV
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_LYDown_slim_split_reweightedPPFX.root 4 detVarLYdown
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_LYRayleigh_slim_split_reweightedPPFX.root 4 detVarLYrayl
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_LYAttenuation_slim_split_reweightedPPFX.root 4 detVarLYatten
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_SCE_slim_split_reweightedPPFX.root 4 detVarSCE
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_Recombination_slim_split_reweightedPPFX.root 4 detVarRecomb2
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_WireModX_slim_split_reweightedPPFX.root 4 detVarWMX
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_WireModYZ_slim_split_reweightedPPFX.root 4 detVarWMYZ
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_WireModThetaXZ_slim_split_reweightedPPFX.root 4 detVarWMAngleXZ
+/Volumes/MyPassport/stvNTuples/antiBDT/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_WireModThetaYZ_slim_split_reweightedPPFX.root 4 detVarWMAngleYZ
 #

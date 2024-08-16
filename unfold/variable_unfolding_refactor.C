@@ -132,11 +132,10 @@ void dump_overall_results( const UnfoldedMeasurement& result,
 void variable_unfolding_refactor() {
 
   // Use a CrossSectionExtractor object to handle the systematics and unfolding
-  //auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_electron_energy.txt" );
-  //auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_electron_angle.txt" );
-  //auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_pion_angle.txt" );
   auto extr = std::make_unique< CrossSectionExtractor >( "../xsec_config_nuecc1pi.txt" );  
+
   auto xsec = extr->get_unfolded_events();
+
   double conv_factor = extr->conversion_factor();
 
   double total_pot = extr->get_data_pot();
@@ -145,11 +144,27 @@ void variable_unfolding_refactor() {
   dump_overall_results( xsec.result_, xsec.unfolded_cov_matrix_map_,
     1.0 / conv_factor, extr->get_prediction_map() );
 
+  // Check that the output file can be written to
+  TFile* File = new TFile("OutputFileMatrix.root", "RECREATE");
+  if (!File || File->IsZombie()) {
+    std::cerr << "Could not write to output file: OutputFileMatrix.root" << std::endl;
+    throw;
+  }
+
+  // No unit conversions are necessary for the unfolding, error propagation,
+  // and additional smearing matrices since they are dimensionless
+  TMatrixD temp_unfolding_matrix = *xsec.result_.unfolding_matrix_;
+  TMatrixD temp_err_prop_matrix = *xsec.result_.err_prop_matrix_;
+  TMatrixD temp_add_smear_matrix = *xsec.result_.add_smear_matrix_;
+  TMatrixD temp_response_matrix = *xsec.result_.response_matrix_;
+  temp_unfolding_matrix.Write("UnfoldingMatrix");
+  temp_err_prop_matrix.Write("ErrorPropagationMatrix");
+  temp_add_smear_matrix.Write("AdditionalSmearingMatrix");
+  temp_response_matrix.Write("ResponseMatrix");
+
   //// Plot slices of the unfolded result
-  //auto* sb_ptr = new SliceBinning( "../electron_energy_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../electron_angle_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../pion_angle_slice_config.txt" );
   auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../pionangle_slice_config.txt" );
   auto& sb = *sb_ptr;
 
   // Keys are generator names and versions, values are TruthFileInfo objects
@@ -177,7 +192,7 @@ void variable_unfolding_refactor() {
   // set to using fake data
   bool using_fake_data = true;
 
-  const auto& slice = sb.slices_.at( 3 ); // only considering single slice
+  const auto& slice = sb.slices_.at( 2 ); // only considering single slice
 
   // Make a histogram showing the unfolded true event counts in the current slice
   SliceHistogram* slice_unf = SliceHistogram::make_slice_histogram(
@@ -348,7 +363,7 @@ void variable_unfolding_refactor() {
     std::cout << name << ": \u03C7\u00b2 = "
       << chi2_result.chi2_ << '/' << chi2_result.num_bins_ << " bin";
     if ( chi2_result.num_bins_ > 1 ) std::cout << 's';
-    std::cout << ", p-value = " << chi2_result.p_value_ << '\n';
+    if ( chi2_result.num_bins_ > 1 ) std::cout << ", p-value = " << chi2_result.p_value_ << '\n';
   }
 
   TCanvas* c1 = new TCanvas;
@@ -358,12 +373,14 @@ void variable_unfolding_refactor() {
   slice_unf->hist_->SetMarkerSize( 0.8 );
   slice_unf->hist_->SetStats( false );
 
-  //slice_unf->hist_->SetTitle("FHC NuWro Fake Data (#nu_{e} only)");
+  //slice_unf->hist_->SetTitle("Flugg Fake Data: Unconstrained");
+  
   //slice_unf->hist_->SetTitle("FHC+RHC Genie Fake Data");
   //slice_unf->hist_->SetTitle("Proton Multiplicity");
-  //slice_unf->hist_->SetTitle("Pion Angle");
-  slice_unf->hist_->SetTitle("Total");
-  //slice_unf->hist_->SetTitle("Electron Energy");
+  //slice_unf->hist_->SetTitle("Opening Angle Constrained");
+  slice_unf->hist_->SetTitle("Total Constrained");
+  //slice_unf->hist_->SetTitle("Electron Energy Constrained");
+  //slice_unf->hist_->SetTitle("All Bins Constrained");
 
   double ymax = -DBL_MAX;
   slice_unf->hist_->Draw( "e" );
@@ -401,21 +418,27 @@ void variable_unfolding_refactor() {
   slice_unf->hist_->GetYaxis()->SetRangeUser( 0., 1.4 );
   slice_unf->hist_->Draw( "e same" );
 
-  TLegend* lg = new TLegend( 0.175, 0.675, 0.875, 0.875 );
+  TLegend* lg = new TLegend( 0.1, 0.685, 0.9, 0.9 );
   for ( const auto& pair : slice_gen_map ) {
     const auto& name = pair.first;
     const auto* slice_h = pair.second;
 
     std::string label = name;
 
-    //if (label == "truth") label = "Flugg";
+    if (label == "truth") label = "NuWro Truth";
+    //if (label == "truth") label = "Genie Truth";
     //if (label == "MicroBooNE Tune") label = "PPFX";
+    if (label == "unfolded data") label = "Unfolded Fake Data";
 
     std::ostringstream oss;
     const auto& chi2_result = chi2_map.at( name );
     oss << std::setprecision( 3 ) << chi2_result.chi2_ << " / "
       << chi2_result.num_bins_ << " bin";
     if ( chi2_result.num_bins_ > 1 ) oss << 's';
+    if ( chi2_result.num_bins_ > 1 ) {
+      if (chi2_result.p_value_ >= 0.01) oss << ", p-value = " << std::fixed << std::setprecision( 2 ) << chi2_result.p_value_;
+      else oss << ", p-value = " << std::fixed << std::setprecision( 3 ) << chi2_result.p_value_;
+    }
 
     if ( name != "unfolded data" ) {
       label += ": #chi^{2} = " + oss.str();
@@ -481,6 +504,7 @@ void variable_unfolding_refactor() {
 //    slice_params_table );
 
 
+   File->Close();
 
 }
 

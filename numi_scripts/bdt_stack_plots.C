@@ -31,6 +31,23 @@ void bdt_stack_plots() {
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_bdt1_withData_reversedBDT.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_fhc_bdt2_withData_reversedBDT.root",
 
+    // Reweighted Flux
+    // BDT scores
+    // FHC
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_electonPhotonBDT_fhc.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_pionProtonBDT_fhc.root",
+    // RHC
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_electonPhotonBDT_rhc.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_pionProtonBDT_rhc.root",
+
+    // Anti-BDT
+    // FHC
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_electonPhotonBDT_fhc_reversedBDT.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_pionProtonBDT_fhc_reversedBDT.root",
+    // RHC
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_electonPhotonBDT_rhc_reversedBDT.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_pionProtonBDT_rhc_reversedBDT.root",
+
     "../systcalc.conf" );
   auto& syst = *syst_ptr;
 
@@ -56,7 +73,7 @@ void bdt_stack_plots() {
   auto& matrix_map = *matrix_map_ptr;
 
   //auto* sb_ptr = new SliceBinning( "../bdt_slice_config_20bins.txt" );
-  //auto* sb_ptr = new SliceBinning( "../bdt2_slice_config.txt" );
+  auto* sb_ptr = new SliceBinning( "../bdt2_slice_config.txt" );
   auto& sb = *sb_ptr;
 
   const auto& slice = sb.slices_.at( 0 ); // only considering single slice
@@ -175,15 +192,20 @@ void bdt_stack_plots() {
   char labelText3[100];
   char labelText4[100];
   sprintf(labelText1, "RHC");
-  //sprintf(labelText2, "7.766e+20 POT");
-  sprintf(labelText2, "11.082e+20 POT");
+  //sprintf(labelText2, "7.77e+20 POT");
+  sprintf(labelText2, "11.08e+20 POT");
   sprintf(labelText3, "#chi^{2} = %.2f / %d Bins", chi2_result.chi2_, chi2_result.num_bins_);
   sprintf(labelText4, "p-value = %.2f", chi2_result.p_value_);
   label.SetTextSize(0.04);
-  label.DrawLatex(0.25, 0.80, labelText1);
-  label.DrawLatex(0.25, 0.75, labelText2);
-  label.DrawLatex(0.25, 0.70, labelText3);
-  label.DrawLatex(0.25, 0.65, labelText4);
+  //label.DrawLatex(0.25, 0.80, labelText1);
+  //label.DrawLatex(0.25, 0.75, labelText2);
+  //label.DrawLatex(0.25, 0.70, labelText3);
+  //label.DrawLatex(0.25, 0.65, labelText4);
+
+  label.DrawLatex(0.55, 0.80, labelText1);
+  label.DrawLatex(0.55, 0.75, labelText2);
+  label.DrawLatex(0.55, 0.70, labelText3);
+  label.DrawLatex(0.55, 0.65, labelText4);
 
   // draw legend
   leg->Draw("Same");
@@ -242,15 +264,17 @@ void bdt_stack_plots() {
   // in the ROOT plot. All configured fractional uncertainties will be
   // included in the output pgfplots file regardless of whether they appear
   // in this vector.
-  //const std::vector< std::string > cov_mat_keys = { "total",
-  //  "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
-  //  "MCstats", "EXTstats"
-  //};
+  const std::vector< std::string > cov_mat_keys = { "total",
+    "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
+    "MCstats", "EXTstats"
+  };
   // show detvars
+  /*
   const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
     "detVarLYdown", "detVarLYrayl", "detVarLYatten", "detVarRecomb2", "detVarSCE", "detVarWMAngleXZ", "detVarWMAngleYZ",
     "detVarWMX", "detVarWMYZ", "detVarNumu" 
   };  
+  */
   // show beamline uncertainties
   //const std::vector< std::string > cov_mat_keys = {"total", "flux_beamline",
   //"flux_Horn_2kA", "flux_Horn1_x_3mm", "flux_Horn1_y_3mm",

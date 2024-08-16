@@ -40,14 +40,16 @@ void scale_by_bin_width(SliceHistogram *pSlice)
 void slice_plots()
 {
     bool normaliseByBinWidth = true;
+    bool normaliseByUnconstrained = true;
 
     // ******************************************************************************************************************
     // Configure the input files ****************************************************************************************
     // ******************************************************************************************************************
 
-    const bool using_fake_data = false;
+    const bool using_fake_data = true;
 
     auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
+    //auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config_noOpeningAngle.txt" );
     auto& sb = *sb_ptr;
 
     // ******************************************************************************************************************
@@ -57,19 +59,14 @@ void slice_plots()
     auto *syst_ptr = new MCC9SystematicsCalculator(
 
         // Data
-        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full.root",
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full_noProton.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband.root",
+        
+        // NuWro
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate.root",
+        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
-        // Genie Fake Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData_sideband_full.root",
-
-        // NuWro Fake Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full_noPi0.root",
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full.root",
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full_withNuWroGenie.root",
-
-        // Flugg + Genie Fake Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData_sideband_full.root",
+        // Genie
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_GenieFakeData_sideband.root",
 
         "../systcalc.conf");
     auto &syst = *syst_ptr;
@@ -105,19 +102,14 @@ void slice_plots()
     auto* syst_ptr_constr = new ConstrainedCalculator(
         
         // Data
-        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full.root",
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_withData_sideband_full_noProton.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband.root",
+        
+        // NuWro
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate.root",
+        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
-        // Genie Fake Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_GenieFakeData_sideband_full.root",
-
-        // NuWro Fake Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full_noPi0.root",
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full.root",
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_NuWroFakeData_sideband_full_withNuWroGenie.root",
-
-        // Flugg + Genie Fake Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output/univmake_output_combined_nuecc1pi_FluggFakeData_sideband_full.root",
+        // Genie
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_GenieFakeData_sideband.root",
 
         "../systcalc.conf" );
     auto &syst_constr = *syst_ptr_constr;
@@ -134,7 +126,7 @@ void slice_plots()
     const auto &reco_bkgd_constr = meas_constr.reco_bkgd_;
     const auto &reco_mc_plus_ext_constr = meas_constr.reco_mc_plus_ext_;
     const auto &reco_covmat_constr = meas_constr.cov_matrix_;
-    const auto *reco_signal_plus_bkgd_constr = new TMatrixD(*reco_signal_constr, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_constr);
+    //const auto *reco_signal_plus_bkgd_constr = new TMatrixD(*reco_signal_constr, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_constr);
 
     // Background Unconstrained
     const auto meas_bkgd_unconstr = syst_constr.get_measured_events("unconstr bkgd");
@@ -175,7 +167,6 @@ void slice_plots()
     total_corrmat_hist.Draw("COLZ");
     gStyle->SetOptStat(0); // Add this line to remove the stats box
 
-    /*
     // Draw dotted lines to separate the sideband and the signal region
     // use the size of the TMatrixD total_covmat_tmatrixd and draw a vertical and a horizontal line between half the bins
     const auto nSignalBins = total_covmat->GetXaxis()->GetNbins() / 3;  
@@ -237,8 +228,8 @@ void slice_plots()
     ltxY3->SetTextAlign(22);
     ltxY3->SetTextAngle(90); // Rotate the text by 90 degrees
     ltxY3->DrawLatex(-3.0, 2.5*nSignalBins, "#nu_{e} Np Sideband bins");
-    */
-
+    
+    /*
     // Draw dotted lines to separate the sideband and the signal region
     // use the size of the TMatrixD total_covmat_tmatrixd and draw a vertical and a horizontal line between half the bins
     const auto nSignalBins = total_covmat->GetXaxis()->GetNbins() / 2;
@@ -270,7 +261,7 @@ void slice_plots()
     ltx_0_Y2->SetTextAlign(22);
     ltx_0_Y2->SetTextAngle(90); // Rotate the text by 90 degrees
     ltx_0_Y2->DrawLatex(-0.12*nSignalBins, 1.5*nSignalBins, "Sideband reco bins");
-
+    */
 
 
     // Add a title to the plot
@@ -295,15 +286,16 @@ void slice_plots()
         SliceHistogram *slice_mc_plus_ext = SliceHistogram::make_slice_histogram(
             *reco_mc_plus_ext, slice, reco_covmat.get());
 
-        SliceHistogram *slice_reco_signal_plus_bkgd = SliceHistogram::make_slice_histogram(
-            *reco_signal_plus_bkgd_constr, slice, matrix_map.at("BNBstats").get_matrix().get());
+        //SliceHistogram *slice_reco_signal_plus_bkgd = SliceHistogram::make_slice_histogram(
+        //   *reco_signal_plus_bkgd_constr, slice, matrix_map.at("BNBstats").get_matrix().get());
+
+        TH1D* reco_bnb_hist = syst.data_hists_.at( NFT::kOnBNB ).get();
+        SliceHistogram* slice_reco_signal_plus_bkgd = SliceHistogram::make_slice_histogram(
+            *reco_bnb_hist, slice, &matrix_map.at("BNBstats") );
       
         // Make constrained versions of the histograms
         SliceHistogram *slice_mc_plus_ext_constr= SliceHistogram::make_slice_histogram(
             *reco_mc_plus_ext_constr, slice, reco_covmat_constr.get());
-      
-        //SliceHistogram *slice_reco_signal_plus_bkgd_constr = SliceHistogram::make_slice_histogram(
-        //    *reco_signal_plus_bkgd_constr, slice, matrix_map_constr.at("BNBstats").get_matrix().get() );
 
         // Background only
         SliceHistogram *slice_bkgd_unconstr= SliceHistogram::make_slice_histogram(
@@ -312,6 +304,77 @@ void slice_plots()
         SliceHistogram *slice_bkgd_constr= SliceHistogram::make_slice_histogram(
             *reco_bkgd_constr, slice, reco_bkdg_covmat_constr.get());
 
+        // sum covariance matrix
+        TMatrixD* unconstrained_covmat = reco_covmat.get();  
+        TMatrixD* constrained_covmat = reco_covmat_constr.get();
+
+        // extract this slice
+        int num_slice_bins = slice.bin_map_.size();
+
+        TH2D* covmat_hist_unconstr = new TH2D( "covmat_hist_unconstr", "covariance; slice bin;"
+          " slice bin; covariance", num_slice_bins, 0., num_slice_bins,
+          num_slice_bins, 0., num_slice_bins );
+        covmat_hist_unconstr->SetDirectory( nullptr );
+        covmat_hist_unconstr->SetStats( false );
+
+        TH2D* covmat_hist_constr = new TH2D( "covmat_hist_constr", "covariance; slice bin;"
+          " slice bin; covariance", num_slice_bins, 0., num_slice_bins,
+          num_slice_bins, 0., num_slice_bins );
+        covmat_hist_constr->SetDirectory( nullptr );
+        covmat_hist_constr->SetStats( false );
+
+        // We're ready. Populate the new covariance matrix using the elements
+        // of the one for the reco bin space
+        double unconstrained_sum_sq = 0.;
+        double constrained_sum_sq = 0.;
+
+        for ( const auto& pair_a : slice.bin_map_ ) {
+          // Global slice bin index
+          int sb_a = pair_a.first;
+          // Set of reco bins that correspond to slice bin sb_a
+          const auto& rb_set_a = pair_a.second;
+          for ( const auto& pair_b : slice.bin_map_ ) {
+            int sb_b = pair_b.first;
+            const auto& rb_set_b = pair_b.second;
+
+            double cov = 0.;
+            double cov_constr = 0.;
+            for ( const auto& rb_m : rb_set_a ) {
+              for ( const auto& rb_n : rb_set_b ) {
+                // The TMatrixD object uses zero-based indices
+                cov += unconstrained_covmat->operator()( rb_m, rb_n );
+                cov_constr += constrained_covmat->operator()( rb_m, rb_n );
+              } // reco bin index m
+            } // reco bin index n
+            covmat_hist_unconstr->SetBinContent( sb_a, sb_b, cov );
+            covmat_hist_constr->SetBinContent( sb_a, sb_b, cov_constr );
+
+            unconstrained_sum_sq += std::pow(cov,2);
+            constrained_sum_sq += std::pow(cov_constr,2);
+          } // slice bin index b
+        } // slice bin index a
+
+        TCanvas* c_covmat_unconstr = new TCanvas("", "", 1080, 1080);
+        covmat_hist_unconstr->Draw("COLZ");
+
+        // write to file
+        std::string out_pdf_name3 = "plots/" + std::to_string( sl_idx ) + "_covmat_unconstr_";
+        if ( sl_idx < 10 ) out_pdf_name3 += "0";
+        out_pdf_name3 += std::to_string( sl_idx )+".pdf";
+        c_covmat_unconstr->SaveAs(out_pdf_name3.c_str());
+        delete c_covmat_unconstr;
+
+        TCanvas* c_covmat_constr = new TCanvas("", "", 1080, 1080);
+        covmat_hist_constr->Draw("COLZ");
+
+        std::string out_pdf_name4 = "plots/" + std::to_string( sl_idx ) + "_covmat_constr_";
+        if ( sl_idx < 10 ) out_pdf_name4 += "0";
+        out_pdf_name4 += std::to_string( sl_idx )+".pdf";
+        c_covmat_constr->SaveAs(out_pdf_name4.c_str());
+        delete c_covmat_constr;
+
+        std::cout << "Slice " << sl_idx << ": unconstrained covmat sum = " << std::sqrt(unconstrained_sum_sq) 
+            << ", constrained covmat sum = " << std::sqrt(constrained_sum_sq) << std::endl;
 
         /*
         // Create plot for the unconstrained covariance matrix
@@ -399,7 +462,7 @@ void slice_plots()
         slice_reco_signal_plus_bkgd->hist_->SetMinimum(0.0);
         slice_mc_plus_ext_constr->hist_->SetMinimum(0.0);
 
-        slice_reco_signal_plus_bkgd->hist_->GetYaxis()->SetRangeUser(0, slice_mc_plus_ext->hist_->GetMaximum() * 1.8);
+        slice_reco_signal_plus_bkgd->hist_->GetYaxis()->SetRangeUser(0, slice_reco_signal_plus_bkgd->hist_->GetMaximum() * 1.5);
 
         slice_reco_signal_plus_bkgd->hist_->GetXaxis()->SetLabelOffset(999); // Hide X-axis labels
         slice_reco_signal_plus_bkgd->hist_->GetXaxis()->SetTitleOffset(999); // Hide X-axis labels
@@ -421,11 +484,13 @@ void slice_plots()
         
         // Convert chi2 values to strings
         std::stringstream chi2SS; 
-        chi2SS << std::setprecision(3) << " - Chi2: " << chi2.chi2_ << ", p-value: " << std::setprecision(2) <<  chi2.p_value_;
+        chi2SS << std::setprecision(3) << " - Chi2: " << chi2.chi2_;
+        if (slice_mc_plus_ext->hist_->GetNbinsX() > 1) chi2SS << ", p-value: " << std::setprecision(2) << chi2.p_value_;
         std::string chi2Str = chi2SS.str();
 
         std::stringstream chi2ConstSS; 
-        chi2ConstSS << std::setprecision(3) << " - Chi2: " << chi2Const.chi2_ << ", p-value: " << std::setprecision(2) << chi2Const.p_value_;
+        chi2ConstSS << std::setprecision(3) << " - Chi2: " << chi2Const.chi2_;
+        if (slice_mc_plus_ext->hist_->GetNbinsX() > 1) chi2ConstSS << ", p-value: " << std::setprecision(2) << chi2Const.p_value_;
         std::string chi2ConstStr = chi2ConstSS.str();
 
         // Print fractional uncertainties in each bin
@@ -441,7 +506,7 @@ void slice_plots()
         TLegend* legendSlice = new TLegend(0.1,0.70,0.9,0.9);
         legendSlice->AddEntry(slice_mc_plus_ext->hist_.get(), ("MC+EXT (unconstr)" + chi2Str).c_str(), "l");
         legendSlice->AddEntry(slice_mc_plus_ext_constr->hist_.get(), ("MC+EXT (constr)" + chi2ConstStr).c_str(), "l");
-        legendSlice->AddEntry(slice_reco_signal_plus_bkgd->hist_.get(), "Data", "l");
+        legendSlice->AddEntry(slice_reco_signal_plus_bkgd->hist_.get(), "NuWro Fake Data", "l");
         legendSlice->Draw();
 
         
@@ -513,6 +578,17 @@ void slice_plots()
         // Background only plots
         TCanvas* c2 = new TCanvas("", "", 1080, 1080);
 
+        // normalise by unconstrained
+        if (normaliseByUnconstrained) {
+            TH1D *h_background_values = (TH1D*)slice_bkgd_unconstr->hist_.get()->Clone("h_background_values");
+            for(int i=0 ; i <= h_background_values->GetNbinsX() ; i++){
+                h_background_values->SetBinError(i, 0);
+            }
+
+            slice_bkgd_constr->hist_->Divide(h_background_values);
+            slice_bkgd_unconstr->hist_->Divide(h_background_values);  
+        }
+
         // Set the color and line thickness of the histograms
         slice_bkgd_unconstr->hist_->SetLineColor(kBlue);
         slice_bkgd_unconstr->hist_->SetLineWidth(1);
@@ -524,7 +600,7 @@ void slice_plots()
         slice_bkgd_unconstr->hist_->SetMinimum(0.0);
         slice_bkgd_constr->hist_->SetMinimum(0.0);
 
-        slice_bkgd_unconstr->hist_->GetYaxis()->SetRangeUser(0, slice_bkgd_unconstr->hist_->GetMaximum() * 1.8);
+        slice_bkgd_unconstr->hist_->GetYaxis()->SetRangeUser(0, slice_bkgd_unconstr->hist_->GetMaximum() * 2);
 
         // Draw the histograms
         slice_bkgd_unconstr->hist_->DrawCopy( "hist" );
@@ -681,9 +757,9 @@ void slice_plots()
     reco_mc_and_ext_hist_no_constr->SetLineWidth( 3 );
 
     // Set the x-axis range to the first num_ordinary_reco_bins bins
-    reco_data_hist->GetXaxis()->SetRange(num_ordinary_reco_bins+1, 2*num_ordinary_reco_bins);
-    reco_mc_and_ext_hist_no_constr->GetXaxis()->SetRange(num_ordinary_reco_bins+1, 2*num_ordinary_reco_bins);
-    reco_constrained_hist->GetXaxis()->SetRange(num_ordinary_reco_bins+1, 2*num_ordinary_reco_bins);
+    reco_data_hist->GetXaxis()->SetRange(num_ordinary_reco_bins+1, 3*num_ordinary_reco_bins);
+    reco_mc_and_ext_hist_no_constr->GetXaxis()->SetRange(num_ordinary_reco_bins+1, 3*num_ordinary_reco_bins);
+    reco_constrained_hist->GetXaxis()->SetRange(num_ordinary_reco_bins+1, 3*num_ordinary_reco_bins);
 
     reco_data_hist->GetYaxis()->SetRangeUser(0, reco_mc_and_ext_hist_no_constr->GetMaximum() * 1.2);
 

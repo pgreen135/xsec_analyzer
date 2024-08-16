@@ -1,0 +1,7 @@
+nuecc1pi_bin_config
+stv_tree
+2
+0 0 "mc_is_inclusive_signal"
+1 -1 "!mc_is_inclusive_signal"
+1
+0 0 "sel_passInclusiveSelection"

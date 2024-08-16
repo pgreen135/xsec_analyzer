@@ -387,9 +387,7 @@ SliceHistogram::Chi2Result SliceHistogram::get_chi2(
     double counts = hist_->GetBinContent( a + 1 );
     double other_counts = other.hist_->GetBinContent( a + 1 );
 
-    //if (a == 4) {
-    //  counts = other_counts; // fudge for testing
-    //}
+    //if (counts == 0) counts = other_counts;
     
     diff_vec( 0, a ) = counts - other_counts;
   }

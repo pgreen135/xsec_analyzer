@@ -223,6 +223,11 @@ class SystematicsCalculator {
       return this->get_smearceptance_matrix( cv_univ );
     }
 
+    inline TH2D* get_cv_hist_2d() const
+    {
+      return this->cv_universe().hist_2d_.get();
+    }
+
     std::unique_ptr< TMatrixD > get_smearceptance_matrix(
       const Universe& univ ) const;
 
@@ -764,8 +769,6 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           const std::string reco_hist2d_name = (dataContainsWeightedCV ? CV_UNIV_NAME : "unweighted") + "_0_reco2d";
           auto reco_hist2d = get_object_unique_ptr<TH2D>(reco_hist2d_name.c_str(), *subdir);
 
-          std::cout << "reco_hist2d_name: " << reco_hist2d_name << std::endl;
-
           // If we're working with EXT data, scale it to the corresponding
           // number of triggers from the BNB data from the same run
           if ( type == NFT::kExtBNB ) {
@@ -782,6 +785,15 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
             }
             
           }
+          //
+          /* 
+          else if ( type == NFT::kOnBNB ) {
+            // for fake data testing purposes, add artifical scaling
+            std::cout << "\n\n\n Warning: scaling added to fake data [Data]. Comment this out for normal running. \n\n\n";
+            reco_hist->Scale( 0.75 );
+            reco_hist2d->Scale( 0.75 );
+          }
+          */
 
           // If we don't have a histogram in the map for this data type
           // yet, just clone the existing histogram.
@@ -907,6 +919,16 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           auto h_reco2d = get_object_unique_ptr< TH2D >(
             (hist_name_prefix + "_reco2d"), *subdir );
 
+          // for fake data testing purposes, add artifical scaling
+          /*
+          std::cout << "\n\n\n Warning: scaling added to fake data [Truth]. Comment this out for normal running. \n\n\n";
+          h_reco->Scale( 0.75 );
+          h_true->Scale( 0.75 );
+          h_2d->Scale( 0.75 );
+          h_categ->Scale( 0.75 );
+          h_reco2d->Scale( 0.75 );
+          */
+
           // Add their contributions to the owned histograms for the
           // current Universe object
           fake_data_universe_->hist_reco_->Add( h_reco.get() );
@@ -964,6 +986,26 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
           // "unweighted" in the response matrix files. Retrieve the
           // corresponding histograms.
           // TODO: revisit this assumption as appropriate
+
+          // PGreen: swapped to using weighted CV universe for everything
+          // Necessary for re-weighted NuMI samples
+          /*
+          auto hist_reco = get_object_unique_ptr< TH1D >(
+            (CV_UNIV_NAME + "_0_reco").c_str(), *subdir );
+
+          auto hist_true = get_object_unique_ptr< TH1D >(
+              (CV_UNIV_NAME + "_0_true").c_str(), *subdir );
+
+          auto hist_2d = get_object_unique_ptr< TH2D >(
+              (CV_UNIV_NAME + "_0_2d").c_str(), *subdir );
+
+          auto hist_categ = get_object_unique_ptr< TH2D >(
+              (CV_UNIV_NAME + "_0_categ").c_str(), *subdir );
+
+          auto hist_reco2d = get_object_unique_ptr< TH2D >(
+              (CV_UNIV_NAME + "_0_reco2d").c_str(), *subdir );
+          */
+          
           auto hist_reco = get_object_unique_ptr< TH1D >(
             "unweighted_0_reco", *subdir );
 
@@ -997,6 +1039,7 @@ void SystematicsCalculator::build_universes( TDirectoryFile& root_tdir ) {
             hist_reco2d = get_object_unique_ptr< TH2D >(
               (CV_UNIV_NAME + "_0_reco2d").c_str(), *subdir );
           }
+          
           
           double temp_scale_factor = 1.;
           

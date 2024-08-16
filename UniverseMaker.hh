@@ -96,6 +96,9 @@ void apply_cv_correction_weights( const std::string& wgt_name,
 {
 
   if ( string_has_end(wgt_name, "UBGenie") ) {
+    // fix bug where Delta2Npi weight squared
+    if (wgt_name == "weight_Theta_Delta2Npi_UBGenie") wgt = std::sqrt(wgt);
+    // apply cv weight
     if (useNuMI) wgt *= spline_weight * ppfx_weight * normalisation_weight;
     else wgt *= spline_weight;
   }
@@ -723,11 +726,12 @@ void UniverseMaker::build_universes(
 
         // additional scaling factor for fake data to allow signal enhanced samples to be combined
         // only applied if branch is present in NTuple
+        
         if (hasFakeDataWeight) {
           normalisation_weight *= fake_data_weight_numi;
           //std::cout << "Fake Data Weight: " << fake_data_weight_numi << ", Norm weight: " << normalisation_weight << std::endl;
         }
-
+        
       }
       else {
         auto& wm = wh.weight_map();
