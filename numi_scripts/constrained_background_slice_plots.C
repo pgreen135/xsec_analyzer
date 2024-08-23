@@ -40,7 +40,7 @@ void scale_by_bin_width(SliceHistogram *pSlice)
 void slice_plots()
 {
     bool normaliseByBinWidth = true;
-    bool normaliseByUnconstrained = true;
+    bool normaliseByUnconstrained = false;
 
     // ******************************************************************************************************************
     // Configure the input files ****************************************************************************************
@@ -59,11 +59,12 @@ void slice_plots()
     auto *syst_ptr = new MCC9SystematicsCalculator(
 
         // Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withNuWroGenie.root",
         
         // NuWro
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate.root",
-        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
+        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
         // Genie
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_GenieFakeData_sideband.root",
@@ -102,11 +103,12 @@ void slice_plots()
     auto* syst_ptr_constr = new ConstrainedCalculator(
         
         // Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withNuWroGenie.root",
         
         // NuWro
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate.root",
-        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
+        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
         // Genie
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_GenieFakeData_sideband.root",
@@ -126,7 +128,6 @@ void slice_plots()
     const auto &reco_bkgd_constr = meas_constr.reco_bkgd_;
     const auto &reco_mc_plus_ext_constr = meas_constr.reco_mc_plus_ext_;
     const auto &reco_covmat_constr = meas_constr.cov_matrix_;
-    //const auto *reco_signal_plus_bkgd_constr = new TMatrixD(*reco_signal_constr, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_constr);
 
     // Background Unconstrained
     const auto meas_bkgd_unconstr = syst_constr.get_measured_events("unconstr bkgd");

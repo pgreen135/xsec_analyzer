@@ -189,8 +189,8 @@
 #/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/rhc/stv-numi_nue_detvars_pion_ntuples_run4_rhc_WireModThetaYZ_slim_split_reweightedPPFX.root 8 detVarWMAngleYZ
 #
 # NuWroGenie Uncertainty
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run1_fhc_test_nuwro.root 1 altCVMCGenieCV
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/rhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run3_rhc_test_combined_nuwro.root 7 altCVMCGenieCV
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nuwro_overlay_pion_ntuples_run1_fhc_nue_fakeweights_unisim.root 1 altCVMC
-#/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/rhc/stv-numi_nuwro_overlay_pion_ntuples_run3_rhc_nue_fakeweights_unisim.root 7 altCVMC
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run1_fhc_test_nuwro.root 1 altCVMCGenieCV
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/rhc/stv-reweightedPPFX_numi_nue_overlay_pion_ntuples_run3_rhc_test_combined_nuwro.root 7 altCVMCGenieCV
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/fhc/stv-numi_nuwro_overlay_pion_ntuples_run1_fhc_nue_fakeweights_unisim.root 1 altCVMC
+/Users/patrick/Data/MicroBooNE/CrossSections/stvNTuples/rhc/stv-numi_nuwro_overlay_pion_ntuples_run3_rhc_nue_fakeweights_unisim.root 7 altCVMC
 #

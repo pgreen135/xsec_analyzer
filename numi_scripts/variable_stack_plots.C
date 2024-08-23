@@ -32,7 +32,7 @@ void scale_by_bin_width(SliceHistogram* pSlice)
 
 void variable_stack_plots() {
 
-  bool normaliseByBinWidth = false;
+  bool normaliseByBinWidth = true;
 
   auto* syst_ptr = new MCC9SystematicsCalculator(
     
@@ -100,17 +100,17 @@ void variable_stack_plots() {
     // Total
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData.root", [OLD]
     // FHC
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_fhc_withData.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_fhc_withData_withNuWroGenie.root",
     // RHC
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData_withNuWroGenie.root",
 
     // Sideband
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband.root",
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withDelta2NpiFix.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withNuWroGenie.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withDelta2NpiFix.root",
 
     // NuWro Fake Data
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData.root", [OLD]
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroUnisim.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
     // Genie Fake Data
@@ -467,12 +467,10 @@ void variable_stack_plots() {
   // in the ROOT plot. All configured fractional uncertainties will be
   // included in the output pgfplots file regardless of whether they appear
   // in this vector.
-  /*
   const std::vector< std::string > cov_mat_keys = { "total",
     "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
-    "MCstats", "EXTstats", "BNBstats"
+    "MCstats", "EXTstats", "BNBstats", "NuWroGenie"
   };
-  */
   // show detvars
   /*
   const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
@@ -490,7 +488,7 @@ void variable_stack_plots() {
   */
   // show xsec uncertainties
   
-  const std::vector< std::string > cov_mat_keys = {"total", "xsec_multi", "xsec_unisim", "xsec_Theta_Delta2Npi" };
+  //const std::vector< std::string > cov_mat_keys = {"total", "xsec_multi", "xsec_unisim", "xsec_Theta_Delta2Npi" };
   
 
   // Loop over the various systematic uncertainties
@@ -559,7 +557,7 @@ void variable_stack_plots() {
   //total_frac_err_hist->GetMaximum() * 1.05 );
   total_frac_err_hist->SetLineColor( kBlack );
   total_frac_err_hist->SetLineWidth( 5 );
-  total_frac_err_hist->SetTitle("Electron Energy - Post Fix");
+  total_frac_err_hist->SetTitle("Opening Angle");
   total_frac_err_hist->GetYaxis()->SetTitle("Fractional Uncertainty");
   total_frac_err_hist->Draw( "hist" );
 

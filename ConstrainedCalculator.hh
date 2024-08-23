@@ -60,6 +60,10 @@ class ConstrainedCalculator : public SystematicsCalculator {
       // number of reconstructed background events
       kOrdinaryRecoBinBkgd,
 
+      // The bin is an "ordinary" one, and the observable of interest is the
+      // number of reconstructed signal events
+      kOrdinaryRecoBinSignal,
+
       // The bin is a "sideband" one, and the observable of interest is the
       // total number of reconstructed events (signal + background)
       kSidebandRecoBinAll
@@ -210,6 +214,13 @@ double ConstrainedCalculator::evaluate_observable( const Universe& univ,
       // For background events, we can use the same procedure regardless
       // of whether we're in the CV universe or not
       double background = univ.hist_2d_->GetBinContent( tb + 1, reco_bin + 1 );
+
+      // For the ordinary signal reco bins, don't include any background
+      // contribution
+      if ( bin_type == kOrdinaryRecoBinSignal ) {
+        background = 0.;
+      }
+
       reco_bin_events += background;
     }
   } // true bins
@@ -338,6 +349,13 @@ double ConstrainedCalculator::evaluate_observable( const Universe& univ,
       // For background events, we can use the same procedure regardless
       // of whether we're in the CV universe or not
       double background = univ.hist_2d_->GetBinContent( tb + 1, reco_bin + 1 );
+
+      // For the ordinary signal reco bins, don't include any background
+      // contribution
+      if ( bin_type == kOrdinaryRecoBinSignal ) {
+        background = 0.;
+      }
+
       reco_bin_events += background;
     }
   } // true bins
@@ -352,8 +370,7 @@ double ConstrainedCalculator::evaluate_mc_stat_covariance( const Universe& univ,
   int reco_bin_a = this->get_reco_bin_and_type( cm_bin_a, bin_type_a );
   int reco_bin_b = this->get_reco_bin_and_type( cm_bin_b, bin_type_b );
 
-  if ( bin_type_a != kOrdinaryRecoBinBkgd
-    && bin_type_b != kOrdinaryRecoBinBkgd )
+  if ( bin_type_a != kOrdinaryRecoBinBkgd && bin_type_b != kOrdinaryRecoBinBkgd && bin_type_a != kOrdinaryRecoBinSignal && bin_type_b != kOrdinaryRecoBinSignal)
   {
     // ROOT histograms use one-based bin indices, so I correct for that here
     double err = univ.hist_reco2d_->GetBinError( reco_bin_a + 1,
@@ -395,8 +412,7 @@ double ConstrainedCalculator::evaluate_data_stat_covariance( int cm_bin_a,
   // ROOT histograms use one-based bin indices, so I correct for that here
   double err = d_hist->GetBinError( reco_bin_a + 1, reco_bin_b + 1 );
 
-  bool orbb = bin_type_a == kOrdinaryRecoBinBkgd
-    || bin_type_b == kOrdinaryRecoBinBkgd;
+  bool orbb = (bin_type_a == kOrdinaryRecoBinBkgd || bin_type_b == kOrdinaryRecoBinBkgd || bin_type_a == kOrdinaryRecoBinSignal || bin_type_b == kOrdinaryRecoBinSignal);
 
   if ( orbb ) {
     // Don't evaluate the data statistical uncertainty for the "ordinary
@@ -409,7 +425,7 @@ double ConstrainedCalculator::evaluate_data_stat_covariance( int cm_bin_a,
 }
 
 size_t ConstrainedCalculator::get_covariance_matrix_size() const {
-  size_t cm_size = 2u * num_ordinary_reco_bins_;
+  size_t cm_size = 3u * num_ordinary_reco_bins_;
   cm_size += num_sideband_reco_bins_;
   return cm_size;
 }
@@ -433,19 +449,27 @@ int ConstrainedCalculator::get_reco_bin_and_type( int cm_bin,
     bin_type = kOrdinaryRecoBinAll;
   }
   // A second copy of the ordinary reco bins follows immediately after.
+  else if ( cm_bin >= num_ordinary_reco_bins_ && cm_bin < 2*num_ordinary_reco_bins_) {
+    bin = cm_bin - num_ordinary_reco_bins_;
+    // total, signal 
+    bin_type = kOrdinaryRecoBinSignal;
+    // total, background
+    //bin_type = kOrdinaryRecoBinBkgd;
+  }
+  // A second copy of the ordinary reco bins follows immediately after.
   // All bins after the copies are assumed to be sideband reco bins.
   else {
-    bin = cm_bin - num_ordinary_reco_bins_;
-    if ( cm_bin < 2*num_ordinary_reco_bins_ ) bin_type = kOrdinaryRecoBinBkgd;
+    bin = cm_bin - 2*num_ordinary_reco_bins_;
+    if (cm_bin >= 2*num_ordinary_reco_bins_ && cm_bin < 3*num_ordinary_reco_bins_) bin_type = kOrdinaryRecoBinBkgd;
     else bin_type = kSidebandRecoBinAll;
   }
-
   return bin;
 }
 
 MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) const
 {
   const int two_times_ord_bins = 2*num_ordinary_reco_bins_;
+  const int three_times_ord_bins = 3*num_ordinary_reco_bins_;
   const auto& cv_univ = this->cv_universe();
 
   // First create vectors of the measured event counts and central-value
@@ -480,9 +504,9 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
   }
 
   // Now create the vector which stores the unconstrained prediction for both
-  // signal+background and background-only bins
-  TMatrixD cv_pred_vec( two_times_ord_bins, 1 );
-  for ( int r = 0; r < two_times_ord_bins; ++r ) {
+  // signal+background, signal-only and background-only bins
+  TMatrixD cv_pred_vec( three_times_ord_bins, 1 );
+  for ( int r = 0; r < three_times_ord_bins; ++r ) {
     // This will automatically handle the signal+background versus
     // background-only bin definitions correctly. Recall that this
     // function takes a zero-based index.
@@ -507,9 +531,9 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
   // Zero-based indices for the covariance matrix elements describing the
   // ordinary reco bins (ob) and sideband reco bins (sb)
   int first_ob_cm_idx = 0;
-  int last_ob_cm_idx = two_times_ord_bins - 1;
-  int first_sb_cm_idx = two_times_ord_bins;
-  int last_sb_cm_idx = two_times_ord_bins + num_sideband_reco_bins_ - 1;
+  int last_ob_cm_idx = three_times_ord_bins - 1;
+  int first_sb_cm_idx = three_times_ord_bins;
+  int last_sb_cm_idx = three_times_ord_bins + num_sideband_reco_bins_ - 1;
 
   // Covariance matrix block that describes the ordinary reco bins
   TMatrixD ordinary_cov_mat = tot_cov_mat->GetSub( first_ob_cm_idx,
@@ -523,11 +547,6 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
   // This version uses rows for sideband bins and columns for ordinary bins.
   TMatrixD s_o_cov_mat = tot_cov_mat->GetSub( first_sb_cm_idx, last_sb_cm_idx,
     first_ob_cm_idx, last_ob_cm_idx );
-
-  // plot the matrices
-  //TCanvas* ordcovcanvas = new TCanvas;
-  //ordinary_cov_mat.Draw("COLZ");
-  //sideband_cov_mat.Draw("COLZ");
 
   // Invert the sideband covariance matrix in preparation for applying
   // the sideband constraint
@@ -554,13 +573,15 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
     TMatrixD::EMatrixCreatorsOp2::kMinus, subtract_from );
 
   // Pull out the block of the constrained covariance matrix that describes
-  // the uncertainty on signal+background
+  // the uncertainty on signal and background
+  /*
+  // total -- background case
   // constrained
   auto* constr_sig_plus_bkgd_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ));
   auto* constr_bkgd_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
   auto* constr_first_offdiag_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
   auto* constr_second_offdiag_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
-  auto* constr_sig_cov_mat = new TMatrixD(*constr_sig_plus_bkgd_cov_mat - *constr_first_offdiag_cov_mat - *constr_second_offdiag_cov_mat + *constr_bkgd_cov_mat);
+  auto* constr_sig_cov_mat = new TMatrixD( *constr_sig_plus_bkgd_cov_mat - *constr_first_offdiag_cov_mat - *constr_second_offdiag_cov_mat + *constr_bkgd_cov_mat);
   // unconstrained
   auto* unconstr_sig_plus_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ) );
   auto* unconstr_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
@@ -569,34 +590,144 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
   auto* unconstr_sig_cov_mat = new TMatrixD( *unconstr_sig_plus_bkgd_cov_mat - *unconstr_first_offdiag_cov_mat - *unconstr_second_offdiag_cov_mat + *unconstr_bkgd_cov_mat);
   
   // build the constrainted background + unconstrained signal convariance matrix
-  auto* sig_plus_bkgd_cov_mat = new TMatrixD( *constr_bkgd_cov_mat + *constr_first_offdiag_cov_mat + *constr_second_offdiag_cov_mat + *unconstr_sig_cov_mat );
+  auto* sig_plus_bkgd_cov_mat = new TMatrixD( *unconstr_sig_cov_mat + *constr_first_offdiag_cov_mat + *constr_second_offdiag_cov_mat +  *constr_bkgd_cov_mat);
+
+  // unconstrained signal + background
+  auto* unconstr_mc_plus_ext_vec = new TMatrixD(cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
+  // unconstrained background
+  auto* unconstr_bkgd_vec = new TMatrixD( cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
+  // unconstrained signal
+  auto* unconstr_sig_vec = new TMatrixD( *unconstr_mc_plus_ext_vec, TMatrixD::EMatrixCreatorsOp2::kMinus, *unconstr_bkgd_vec );
+  
+  // constrained signal + background
+  auto* constr_mc_plus_ext_vec = new TMatrixD(constr_cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
+  // constrained background
+  auto* reco_bkgd_vec = new TMatrixD(constr_cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
+  
+  // unconstrained signal + constrained background
+  auto* mc_plus_ext_vec = new TMatrixD( *unconstr_sig_vec, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_vec );
+  */
+  
+  // --- testing ---
+  // fully constrained 
+  //sig_plus_bkgd_cov_mat = constr_sig_plus_bkgd_cov_mat;
+  //mc_plus_ext_vec = constr_mc_plus_ext_vec;
+
+  /*
+  // total -- signal case
+  // constrained
+  auto* constr_sig_plus_bkgd_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ));
+  auto* constr_sig_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
+  auto* constr_first_offdiag_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
+  auto* constr_second_offdiag_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
+  auto* constr_bkgd_cov_mat = new TMatrixD( *constr_sig_plus_bkgd_cov_mat - *constr_first_offdiag_cov_mat - *constr_second_offdiag_cov_mat + *constr_sig_cov_mat);
+  // unconstrained
+  auto* unconstr_sig_plus_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ) );
+  auto* unconstr_sig_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
+  auto* unconstr_first_offdiag_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
+  auto* unconstr_second_offdiag_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
+  auto* unconstr_bkgd_cov_mat = new TMatrixD( *unconstr_sig_plus_bkgd_cov_mat - *unconstr_first_offdiag_cov_mat - *unconstr_second_offdiag_cov_mat + *unconstr_sig_cov_mat);
+
+  // build the constrainted background + unconstrained signal convariance matrix
+  auto* sig_plus_bkgd_cov_mat = new TMatrixD( *constr_bkgd_cov_mat + *constr_first_offdiag_cov_mat + *constr_second_offdiag_cov_mat + *unconstr_sig_cov_mat);
+
+  // unconstrained signal + background
+  auto* unconstr_mc_plus_ext_vec = new TMatrixD(cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
+  // unconstrained signal
+  auto* unconstr_sig_vec = new TMatrixD( cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
+  // unconstrained background
+  auto* unconstr_bkgd_vec = new TMatrixD( *unconstr_mc_plus_ext_vec, TMatrixD::EMatrixCreatorsOp2::kMinus, *unconstr_sig_vec );
+  
+  // constrained signal + background
+  auto* constr_mc_plus_ext_vec = new TMatrixD(constr_cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
+  // constrained signal
+  auto* constr_sig_vec = new TMatrixD(constr_cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
+  // constrained background
+  auto* reco_bkgd_vec = new TMatrixD( *constr_mc_plus_ext_vec, TMatrixD::EMatrixCreatorsOp2::kMinus, *constr_sig_vec );
+  
+  // unconstrained signal + constrained background 
+  auto* mc_plus_ext_vec = new TMatrixD( *unconstr_sig_vec, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_vec );
+  */
+
+
+  // total -- signal -- background case
+  // constrained
+  auto* constr_sig_plus_bkgd_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ));
+  auto* constr_sig_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
+  auto* constr_bkgd_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( two_times_ord_bins, three_times_ord_bins - 1, two_times_ord_bins, three_times_ord_bins - 1 ) );
+  // and constrained correlations between total and signal 
+  auto* constr_first_offdiag_totalsignal_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
+  auto* constr_second_offdiag_totalsignal_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
+  // constrainted correlations between signal and background
+  auto* constr_first_offdiag_signalbackground_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, two_times_ord_bins, three_times_ord_bins - 1 ));
+  auto* constr_second_offdiag_signalbackground_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( two_times_ord_bins, three_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
+  // between total and background
+  auto* constr_first_offdiag_totalbackground_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, two_times_ord_bins, three_times_ord_bins - 1 ));
+  auto* constr_second_offdiag_totalbackground_cov_mat = new TMatrixD(constr_ordinary_cov_mat.GetSub( two_times_ord_bins, three_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
+
+  // pull out blocks that describe unconstrained uncertainty on signal and background
+  // unconstrained
+  auto* unconstr_sig_plus_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, num_ordinary_reco_bins_ - 1 ) );
+  auto* unconstr_sig_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ) );
+  auto* unconstr_bkgd_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( two_times_ord_bins, three_times_ord_bins - 1, two_times_ord_bins, three_times_ord_bins - 1 ) );
+  // and unconstrained correlations between total and signal 
+  auto* unconstr_first_offdiag_totalsignal_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
+  auto* unconstr_second_offdiag_totalsignal_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
+  // unconstrainted correlations between signal and background
+  auto* unconstr_first_offdiag_signalbackground_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, two_times_ord_bins, three_times_ord_bins - 1 ));
+  auto* unconstr_second_offdiag_signalbackground_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( two_times_ord_bins, three_times_ord_bins - 1, num_ordinary_reco_bins_, two_times_ord_bins - 1 ));
+  // between total and background
+  auto* unconstr_first_offdiag_totalbackground_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( 0, num_ordinary_reco_bins_ - 1, two_times_ord_bins, three_times_ord_bins - 1 ));
+  auto* unconstr_second_offdiag_totalbackground_cov_mat = new TMatrixD(ordinary_cov_mat.GetSub( two_times_ord_bins, three_times_ord_bins - 1, 0, num_ordinary_reco_bins_ - 1 ));
+
+  // build the constrainted background + unconstrained signal convariance matrix
+  // using total-signal
+  //auto* sig_plus_bkgd_cov_mat = new TMatrixD( *unconstr_sig_cov_mat + *constr_first_offdiag_totalsignal_cov_mat + *constr_second_offdiag_totalsignal_cov_mat + *constr_bkgd_cov_mat );
+  // using total-background
+  //auto* sig_plus_bkgd_cov_mat = new TMatrixD( *unconstr_sig_cov_mat + *constr_first_offdiag_totalbackground_cov_mat + *constr_second_offdiag_totalbackground_cov_mat + *constr_bkgd_cov_mat );
+  // using signal-background (not right!)
+  auto* sig_plus_bkgd_cov_mat = new TMatrixD( *unconstr_sig_cov_mat + *constr_first_offdiag_signalbackground_cov_mat + *constr_second_offdiag_signalbackground_cov_mat + *constr_bkgd_cov_mat );  
+  
+  // fully constrained
+  //auto* sig_plus_bkgd_cov_mat = constr_sig_plus_bkgd_cov_mat;
+
 
   // Get the constrained background prediction column vector
-  auto* reco_bkgd_vec = new TMatrixD(
-    constr_cv_pred_vec.GetSub( num_ordinary_reco_bins_,
-      two_times_ord_bins - 1, 0, 0 )
-  );
+  auto* reco_bkgd_vec = new TMatrixD(constr_cv_pred_vec.GetSub( two_times_ord_bins, three_times_ord_bins - 1, 0, 0 ));
+  
+  // Get the unconstrained signal prediction column vector
+  auto* unconstr_sig_vec = new TMatrixD(cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
 
-  // Get the constrained signal+background prediction column vector
-  /*
-  TMatrixD* mc_plus_ext_vec = new TMatrixD(
-    constr_cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 )
-  );
+  // Get the unconstrained background prediction column vector
+  auto* unconstr_bkgd_vec = new TMatrixD(cv_pred_vec.GetSub( two_times_ord_bins, three_times_ord_bins - 1, 0, 0 ));
 
-  */
-  // NEW
-  TMatrixD* unconstr_mc_plus_ext_vec = new TMatrixD( cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
-  TMatrixD* unconstr_bkgd_vec = new TMatrixD( cv_pred_vec.GetSub( num_ordinary_reco_bins_, two_times_ord_bins - 1, 0, 0 ));
-  auto* unconstr_sig_vec = new TMatrixD( *unconstr_mc_plus_ext_vec, TMatrixD::EMatrixCreatorsOp2::kMinus, *unconstr_bkgd_vec );
+  // unconstrained signal + background
+  auto* unconstr_mc_plus_ext_vec = new TMatrixD(cv_pred_vec.GetSub( 0, num_ordinary_reco_bins_ - 1, 0, 0 ));
+
+  // constrained background + unconstrained signal
   auto* mc_plus_ext_vec = new TMatrixD( *unconstr_sig_vec, TMatrixD::EMatrixCreatorsOp2::kPlus, *reco_bkgd_vec );
+
+  
+
+  std::cout << "Total unconstrained: " << std::sqrt( unconstr_sig_plus_bkgd_cov_mat->E2Norm() ) << ", Total constrained: " << std::sqrt( constr_sig_plus_bkgd_cov_mat->E2Norm() ) << ", Signal Unconstrained + Background Constrained: " << std::sqrt( sig_plus_bkgd_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Signal unconstrained: " << std::sqrt( unconstr_sig_cov_mat->E2Norm() ) << ", Signal constrained: " << std::sqrt( constr_sig_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Background unconstrained: " << std::sqrt( unconstr_bkgd_cov_mat->E2Norm() ) << ", Background constrained: " << std::sqrt( constr_bkgd_cov_mat->E2Norm() ) << std::endl;
+
+  //std::cout << "Unconstrained off-diagonal 1: " << std::sqrt( unconstr_first_offdiag_cov_mat->E2Norm() ) << ", Unconstrained off-diagonal 2: " << std::sqrt( unconstr_second_offdiag_cov_mat->E2Norm() ) << std::endl;
+  //std::cout << "Constrained off-diagonal 1: " << std::sqrt( constr_first_offdiag_cov_mat->E2Norm() ) << ", Constrained off-diagonal 2: " << std::sqrt( constr_second_offdiag_cov_mat->E2Norm() ) << std::endl;
+  
+  std::cout << "Constrained off-diagonal total-signal 1: " << std::sqrt( constr_first_offdiag_totalsignal_cov_mat->E2Norm() ) << ", Constrained off-diagonal total-signal 2: " << std::sqrt( constr_second_offdiag_totalsignal_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Constrained off-diagonal total-background 1: " << std::sqrt( constr_first_offdiag_totalbackground_cov_mat->E2Norm() ) << ", Constrained off-diagonal total-background 2: " << std::sqrt( constr_second_offdiag_totalbackground_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Constrained off-diagonal signal-background 1: " << std::sqrt( constr_first_offdiag_signalbackground_cov_mat->E2Norm() ) << ", Constrained off-diagonal signal-background 2: " << std::sqrt( constr_second_offdiag_signalbackground_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Unconstrained off-diagonal total-signal 1: " << std::sqrt( unconstr_first_offdiag_totalsignal_cov_mat->E2Norm() ) << ", Unconstrained off-diagonal total-signal 2: " << std::sqrt( unconstr_second_offdiag_totalsignal_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Unconstrained off-diagonal total-background 1: " << std::sqrt( unconstr_first_offdiag_totalbackground_cov_mat->E2Norm() ) << ", Unconstrained off-diagonal total-background 2: " << std::sqrt( unconstr_second_offdiag_totalbackground_cov_mat->E2Norm() ) << std::endl;
+  std::cout << "Unconstrained off-diagonal signal-background 1: " << std::sqrt( unconstr_first_offdiag_signalbackground_cov_mat->E2Norm() ) << ", Unconstrained off-diagonal signal-background 2: " << std::sqrt( unconstr_second_offdiag_signalbackground_cov_mat->E2Norm() ) << std::endl;
 
   // Get the ordinary reco bin data column vector after subtracting the
   // constrained background prediction
-  auto* reco_data_minus_bkgd = new TMatrixD( ordinary_data,
-    TMatrixD::EMatrixCreatorsOp2::kMinus, *reco_bkgd_vec );
-
-  //MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
-  //  mc_plus_ext_vec, sig_plus_bkgd_cov_mat );
+  auto* reco_data_minus_bkgd = new TMatrixD( ordinary_data, TMatrixD::EMatrixCreatorsOp2::kMinus, *reco_bkgd_vec );
+  // uncontrained background
+  auto* unconstr_reco_data_minus_bkgd = new TMatrixD( ordinary_data, TMatrixD::EMatrixCreatorsOp2::kMinus, *unconstr_bkgd_vec );
 
   if (type == "default") {
     MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
@@ -605,7 +736,7 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
     return result;
   }
   if (type == "unconstr sig+bkgd") {
-    MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+    MeasuredEvents result( unconstr_reco_data_minus_bkgd, unconstr_bkgd_vec,
       unconstr_mc_plus_ext_vec, unconstr_sig_plus_bkgd_cov_mat );
 
     return result;
@@ -617,7 +748,7 @@ MeasuredEvents ConstrainedCalculator::get_measured_events(std::string type) cons
     return result;
   }
   else if (type == "unconstr bkgd") {
-    MeasuredEvents result( reco_data_minus_bkgd, reco_bkgd_vec,
+    MeasuredEvents result( unconstr_reco_data_minus_bkgd, unconstr_bkgd_vec,
       unconstr_bkgd_vec, unconstr_bkgd_cov_mat );
 
     return result;
