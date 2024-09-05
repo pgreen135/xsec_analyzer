@@ -100,15 +100,15 @@ void variable_stack_plots() {
     // Total
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData.root", [OLD]
     // FHC
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_fhc_withData_withNuWroGenie.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_fhc_withData_noThreshold_withNuWroGenie.root",
     // RHC
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData_withNuWroGenie.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData_noThreshold_withNuWroGenie.root",
 
     // Sideband
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withNuWroGenie.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_noThreshold_withNuWroGenie.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withDelta2NpiFix.root",
 
-    // NuWro Fake Data
+    // NuWro Fake Data∂
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData.root", [OLD]
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
@@ -375,10 +375,11 @@ void variable_stack_plots() {
   char labelText3[100];
   char labelText4[100];
   char labelText5[100];
-  sprintf(labelText1, "FHC + RHC");
+  //sprintf(labelText1, "FHC + RHC");
+  sprintf(labelText1, "RHC");
   //sprintf(labelText2, "7.77e+20 POT"); // FHC
-  //sprintf(labelText2, "11.08e+20 POT"); // RHC
-  sprintf(labelText2, "1.885e+21 POT"); // FHC + RHC
+  sprintf(labelText2, "11.08e+20 POT"); // RHC
+  //sprintf(labelText2, "1.885e+21 POT"); // FHC + RHC
   
   //sprintf(labelText1, "Run 5 FHC");
   //sprintf(labelText2, "2.7973e+20 POT");
@@ -403,7 +404,7 @@ void variable_stack_plots() {
   label.DrawLatex(0.175, 0.80, labelText1);
   label.DrawLatex(0.175, 0.75, labelText2);
   label.DrawLatex(0.175, 0.70, labelText3);
-  label.DrawLatex(0.175, 0.65, labelText4);
+  //label.DrawLatex(0.175, 0.65, labelText4);
   //label.DrawLatex(0.175, 0.60, labelText5);
 
   // draw legend
@@ -467,10 +468,12 @@ void variable_stack_plots() {
   // in the ROOT plot. All configured fractional uncertainties will be
   // included in the output pgfplots file regardless of whether they appear
   // in this vector.
+  
   const std::vector< std::string > cov_mat_keys = { "total",
     "detVar_total", "flux", "flux_beamline", "reint", "xsec_total", "POT", "numTargets", "dirtNorm",
     "MCstats", "EXTstats", "BNBstats", "NuWroGenie"
   };
+  
   // show detvars
   /*
   const std::vector< std::string > cov_mat_keys = {"total", "detVar_total",
@@ -558,6 +561,7 @@ void variable_stack_plots() {
   total_frac_err_hist->SetLineColor( kBlack );
   total_frac_err_hist->SetLineWidth( 5 );
   total_frac_err_hist->SetTitle("Opening Angle");
+  //total_frac_err_hist->SetTitle("Pion Angle");
   total_frac_err_hist->GetYaxis()->SetTitle("Fractional Uncertainty");
   total_frac_err_hist->Draw( "hist" );
 

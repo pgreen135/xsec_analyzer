@@ -192,7 +192,7 @@ void variable_unfolding_refactor() {
   // set to using fake data
   bool using_fake_data = true;
 
-  const auto& slice = sb.slices_.at( 0 ); // only considering single slice
+  const auto& slice = sb.slices_.at( 2 ); // only considering single slice
 
   // Make a histogram showing the unfolded true event counts in the current slice
   SliceHistogram* slice_unf = SliceHistogram::make_slice_histogram(
@@ -377,9 +377,9 @@ void variable_unfolding_refactor() {
   
   //slice_unf->hist_->SetTitle("FHC+RHC Genie Fake Data");
   //slice_unf->hist_->SetTitle("Proton Multiplicity");
-  //slice_unf->hist_->SetTitle("Opening Angle");
+  slice_unf->hist_->SetTitle("Pion Angle");
   //slice_unf->hist_->SetTitle("Total");
-  slice_unf->hist_->SetTitle("Electron Energy");
+  //slice_unf->hist_->SetTitle("Electron Energy");
   //slice_unf->hist_->SetTitle("All Bins");
 
   double ymax = -DBL_MAX;
