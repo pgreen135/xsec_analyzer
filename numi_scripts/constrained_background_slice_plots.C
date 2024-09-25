@@ -46,7 +46,7 @@ void slice_plots()
     // Configure the input files ****************************************************************************************
     // ******************************************************************************************************************
 
-    const bool using_fake_data = true;
+    const bool using_fake_data = false;
 
     auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
     //auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config_noOpeningAngle.txt" );
@@ -59,11 +59,11 @@ void slice_plots()
     auto *syst_ptr = new MCC9SystematicsCalculator(
 
         // Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withNuWroGenie.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_noThreshold_withNuWroGenie.root",
         
         // NuWro
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate.root",
-        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
+        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_noThreshold_withNuWroGenie.root",
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
         // Genie
@@ -73,7 +73,7 @@ void slice_plots()
     auto &syst = *syst_ptr;
 
     
-    // Get the measured events from the systematics calculator
+    // Get the measured events from the systematics calculator∂
     const auto meas = syst.get_measured_events();
 
     /*
@@ -103,11 +103,11 @@ void slice_plots()
     auto* syst_ptr_constr = new ConstrainedCalculator(
         
         // Data
-        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withNuWroGenie.root",
+        //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_noThreshold_withNuWroGenie.root",
         
         // NuWro
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate.root",
-        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
+        "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_noThreshold_withNuWroGenie.root",
         //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
 
         // Genie
@@ -507,7 +507,8 @@ void slice_plots()
         TLegend* legendSlice = new TLegend(0.1,0.70,0.9,0.9);
         legendSlice->AddEntry(slice_mc_plus_ext->hist_.get(), ("MC+EXT (unconstr)" + chi2Str).c_str(), "l");
         legendSlice->AddEntry(slice_mc_plus_ext_constr->hist_.get(), ("MC+EXT (constr)" + chi2ConstStr).c_str(), "l");
-        legendSlice->AddEntry(slice_reco_signal_plus_bkgd->hist_.get(), "NuWro Fake Data", "l");
+        //legendSlice->AddEntry(slice_reco_signal_plus_bkgd->hist_.get(), "NuWro Fake Data", "l");
+        legendSlice->AddEntry(slice_reco_signal_plus_bkgd->hist_.get(), "Data", "l");
         legendSlice->Draw();
 
         

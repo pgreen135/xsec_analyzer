@@ -330,8 +330,8 @@ CrossSectionExtractor::CrossSectionExtractor(
   }
 
   // Initialize the owned SystematicsCalculator
-  //auto* temp_syst = new MCC9SystematicsCalculator( univ_file_name, syst_config_file_name );
-  auto* temp_syst = new ConstrainedCalculator( univ_file_name, syst_config_file_name );
+  auto* temp_syst = new MCC9SystematicsCalculator( univ_file_name, syst_config_file_name );
+  //auto* temp_syst = new ConstrainedCalculator( univ_file_name, syst_config_file_name );
   syst_.reset( temp_syst );
 
   // With the SystematicsCalculator in place (including its owned Universe
@@ -344,8 +344,8 @@ CrossSectionResult CrossSectionExtractor::get_unfolded_events() {
   // Evaluate the total and partial covariance matrices in reco space
   auto matrix_map = syst_->get_covariances();
 
-  //auto* mcc9 = dynamic_cast< MCC9SystematicsCalculator* >( syst_.get() );
-  auto* mcc9 = dynamic_cast< ConstrainedCalculator* >( syst_.get() );
+  auto* mcc9 = dynamic_cast< MCC9SystematicsCalculator* >( syst_.get() );
+  //auto* mcc9 = dynamic_cast< ConstrainedCalculator* >( syst_.get() );
 
   /*
   if ( INCLUDE_BKGD_ONLY_ERRORS ) {

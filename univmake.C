@@ -132,6 +132,8 @@ int main( int argc, char* argv[] ) {
 
   } // loop over input files
 
+  std::cout << "Finished loop over files" << std::endl;
+
   // Use a temporary MCC9SystematicsCalculator object to automatically calculate the total
   // event counts in each universe across all input files. Since the
   // get_covariances() member function is never called, the specific
@@ -139,6 +141,8 @@ int main( int argc, char* argv[] ) {
   // passed as the second argument to the constructor just instructs the
   // MCC9SystematicsCalculator class to use the default systematics configuration file.
   MCC9SystematicsCalculator unfolder( output_file_name, "", tdirfile_name );
+
+  std::cout << "Finished unfolder MCC9SystematicsCalculator instance" << std::endl;
 
   return 0;
 }

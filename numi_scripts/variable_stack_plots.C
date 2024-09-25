@@ -102,16 +102,17 @@ void variable_stack_plots() {
     // FHC
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_fhc_withData_noThreshold_withNuWroGenie.root",
     // RHC
-    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData_noThreshold_withNuWroGenie.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_rhc_withData_noThreshold_withNuWroGenie.root",
 
     // Sideband
-    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_noThreshold_withNuWroGenie.root",
+    "/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_noThreshold_withNuWroGenie.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_withData_sideband_withDelta2NpiFix.root",
 
-    // NuWro Fake Data∂
+    // NuWro Fake Data
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData.root", [OLD]
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_withNuWroGenie.root",
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_sideband_alternate_75pc_scaling.root",
+    //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_NuWroFakeData_pionMomentum_withNuWroGenie.root",
 
     // Genie Fake Data
     //"/Users/patrick/Documents/MicroBooNE/CrossSections/NuePiXSec_Analysis/XSecAnalyzer/univmake_output_reweightedPPFX/univmake_output_nuecc1pi_combined_GenieFakeData.root", [OLD]
@@ -143,9 +144,10 @@ void variable_stack_plots() {
   auto* matrix_map_ptr = syst.get_covariances().release();
   auto& matrix_map = *matrix_map_ptr;
 
-  auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_slice_config.txt" );
+  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_pion_momentum_slice_config.txt" );
   //auto* sb_ptr = new SliceBinning( "../pionangle_slice_config.txt" );
-  //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_1_slice_config.txt" );
+  auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_1_slice_config.txt" );
   //auto* sb_ptr = new SliceBinning( "../nuecc1pi_sideband_2_slice_config.txt" );
   
 
@@ -155,7 +157,7 @@ void variable_stack_plots() {
 
   auto& sb = *sb_ptr;
 
-  unsigned int sl_idx = 4;
+  unsigned int sl_idx = 1;
   const auto& slice = sb.slices_.at( sl_idx ); // only considering single slice at a time
 
   // -- confusion matrix -- 
@@ -375,11 +377,11 @@ void variable_stack_plots() {
   char labelText3[100];
   char labelText4[100];
   char labelText5[100];
-  //sprintf(labelText1, "FHC + RHC");
-  sprintf(labelText1, "RHC");
+  sprintf(labelText1, "FHC + RHC");
+  //sprintf(labelText1, "RHC");
   //sprintf(labelText2, "7.77e+20 POT"); // FHC
-  sprintf(labelText2, "11.08e+20 POT"); // RHC
-  //sprintf(labelText2, "1.885e+21 POT"); // FHC + RHC
+  //sprintf(labelText2, "11.08e+20 POT"); // RHC
+  sprintf(labelText2, "1.885e+21 POT"); // FHC + RHC
   
   //sprintf(labelText1, "Run 5 FHC");
   //sprintf(labelText2, "2.7973e+20 POT");
@@ -404,8 +406,8 @@ void variable_stack_plots() {
   label.DrawLatex(0.175, 0.80, labelText1);
   label.DrawLatex(0.175, 0.75, labelText2);
   label.DrawLatex(0.175, 0.70, labelText3);
-  //label.DrawLatex(0.175, 0.65, labelText4);
-  //label.DrawLatex(0.175, 0.60, labelText5);
+  label.DrawLatex(0.175, 0.65, labelText4);
+  label.DrawLatex(0.175, 0.60, labelText5);
 
   // draw legend
   leg->Draw("Same");

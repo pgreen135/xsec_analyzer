@@ -54,7 +54,7 @@ MCC9SystematicsCalculator::MCC9SystematicsCalculator(
   : SystematicsCalculator( input_respmat_file_name,
   syst_cfg_file_name, respmat_tdirectoryfile_name )
 {
-
+  std::cout << "Here 6" << std::endl;
 }
 
 double MCC9SystematicsCalculator::evaluate_observable( const Universe& univ,
